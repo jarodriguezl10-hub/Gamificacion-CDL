@@ -711,9 +711,11 @@ export default function GameUI() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl w-full text-center space-y-6 mt-24 mb-8">
           <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">
-            Simulador: Un Día Tuyo
+            Un Día Tuyo
           </h1>
-          <p className="text-xl text-slate-400 font-medium">Tienes 2 MINUTOS para gestionar todo el trabajo sin llevar a tu equipo al Burnout.</p>
+          <p className="text-xl text-slate-200 font-semibold max-w-2xl mx-auto leading-relaxed mt-4">
+            ¿Estás listo para vivir los 2 minutos más intensos de tu día? Debes gestionar todo el trabajo sin llevar a tu equipo al burnout.
+          </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-8 mt-6">
             <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-xl">
