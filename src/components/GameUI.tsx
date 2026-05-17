@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart, ShieldAlert, BrainCircuit, FileText, UserPlus, Flame, CheckCircle, Play, MessageCircle, AlertTriangle, Zap, Clock, Star, HelpCircle, Stethoscope, Archive, Target, BarChart2, Trophy } from "lucide-react";
 
 // --- TIPOS DE DATOS ---
-type TaskType = 'urgente' | 'compleja' | 'rutinaria' | 'lider';
+type TaskType = 'urgente' | 'compleja' | 'rutinaria' | 'lider' | 'analisis';
 
 interface Task {
   id: string;
