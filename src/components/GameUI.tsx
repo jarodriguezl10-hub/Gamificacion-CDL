@@ -556,6 +556,7 @@ export default function GameUI() {
   const getFeedback = () => {
     const wrongDelayed = icebox.filter(t => !t.canBeDelayed).length;
     const rightDelayed = icebox.filter(t => t.canBeDelayed).length;
+    const burnedOutEmployees = employees.filter(e => e.maxStress >= 100 && e.id !== "leader").length;
     
     let feedback = "";
     
@@ -566,9 +567,15 @@ export default function GameUI() {
       feedback += `✅ Excelente: Pospusiste ${rightDelayed} tareas de baja prioridad correctamente, manteniendo el foco. \n\n`;
     }
     if (wrongAssignments > 3) {
-      feedback += `⚠️ Asignación: Le diste tareas al perfil equivocado ${wrongAssignments} veces. Conoce mejor a tu equipo. \n`;
+      feedback += `⚠️ Asignación: Le diste tareas al perfil equivocado ${wrongAssignments} veces. Conoce mejor a tu equipo. \n\n`;
     } else if (wrongAssignments === 0 && completedTasks > 0) {
-      feedback += `🏆 Maestro delegando: Asignaste cada tarea exactamente a la persona correcta sin fallar. \n`;
+      feedback += `🏆 Maestro delegando: Asignaste cada tarea exactamente a la persona correcta sin fallar. \n\n`;
+    }
+    
+    if (burnedOutEmployees > 0) {
+      feedback += `🔥 Alerta Humana: ${burnedOutEmployees} persona(s) llegaron a BURNOUT por estrés extremo. Como líder debes revisar esto; tu equipo es lo más importante, mucho más que cualquier lanzamiento o auditoría. \n`;
+    } else if (completedTasks > 0) {
+      feedback += `🧘 Liderazgo Sano: Nadie llegó a Burnout. Cuidaste la salud mental de tu equipo bajo presión.\n`;
     }
 
     if (feedback === "") {
