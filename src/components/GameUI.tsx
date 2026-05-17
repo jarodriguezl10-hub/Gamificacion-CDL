@@ -794,7 +794,7 @@ export default function GameUI() {
                   <motion.div
                     key={task.id}
                     draggable
-                    onDragStart={(e) => handleDragStart(e, task.id)}
+                    onDragStart={(e: any) => handleDragStart(e, task.id)}
                     layout
                     initial={{ opacity: 0, scale: 0.9, x: 20 }}
                     animate={{ opacity: 1, scale: 1, x: 0 }}
