@@ -431,7 +431,6 @@ export default function GameUI() {
         if (prev <= 1) {
           setIsGameOver(true);
           setWinStatus(true);
-          saveToLeaderboard();
           return 0;
         }
         return prev - 1;
