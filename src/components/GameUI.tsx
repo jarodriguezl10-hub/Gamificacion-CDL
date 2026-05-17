@@ -33,6 +33,7 @@ interface Employee {
   isAskingHelp: boolean; 
   isMedical: boolean; 
   medicalTimer: number; 
+  isAi?: boolean;
 }
 
 interface LeaderboardEntry {
@@ -50,24 +51,34 @@ const INITIAL_EMPLOYEES: Employee[] = [
   { id: "e1", name: "Sofía", role: "Experiencia", avatar: "👩‍💼", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'compleja' },
   { id: "e3", name: "Mateo", role: "Apaga-incendios", avatar: "👨‍🚒", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'urgente' },
   { id: "e4", name: "Valeria", role: "Novata", avatar: "👧", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'rutinaria' },
-  { id: "e5", name: "Ana", role: "Asistente", avatar: "👩‍🔧", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'rutinaria' },
-  { id: "e6", name: "Elena", role: "Especialista", avatar: "👩‍💻", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'compleja' }
+  { id: "ai1", name: "Copilot", role: "Asistente AI", avatar: "🤖", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'analisis', isAi: true },
+  { id: "ai2", name: "Gemini", role: "Asistente AI", avatar: "🦾", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'analisis', isAi: true }
 ];
 
 const MASTER_TASK_POOL = [
-  // LÍDER (10)
+  // ANÁLISIS (Para Asistentes AI)
+  { name: "Resumir 100 págs de auditoría", type: "analisis", workRequired: 80, canBeDelayed: false },
+  { name: "Crear presentación de métricas", type: "analisis", workRequired: 90, canBeDelayed: false },
+  { name: "Cruzar datos de ventas vs. costos", type: "analisis", workRequired: 100, canBeDelayed: false },
+  { name: "Generar minuta de reunión directiva", type: "analisis", workRequired: 70, canBeDelayed: false },
+  { name: "Extraer KPIs de logs del servidor", type: "analisis", workRequired: 110, canBeDelayed: false },
+  { name: "Comparativa de proveedores en Excel", type: "analisis", workRequired: 120, canBeDelayed: false },
+  { name: "Transcribir entrevista de usuarios", type: "analisis", workRequired: 90, canBeDelayed: false },
+  { name: "Limpiar base de datos de correos", type: "analisis", workRequired: 130, canBeDelayed: false },
+  { name: "Proyectar presupuesto a 5 años", type: "analisis", workRequired: 150, canBeDelayed: false },
+  { name: "Traducir manual de App V2 al inglés", type: "analisis", workRequired: 100, canBeDelayed: false },
+
+  // LÍDER (No delegar a AI)
   { name: "Aprobar presupuesto App V2", type: "lider", workRequired: 120, canBeDelayed: false },
   { name: "Negociar con Firma Auditora", type: "lider", workRequired: 100, canBeDelayed: false },
   { name: "Reunión con CEO por Lanzamiento", type: "lider", workRequired: 150, canBeDelayed: false },
   { name: "Firmar balance final anual", type: "lider", workRequired: 140, canBeDelayed: false },
-  { name: "Aprobar rediseño final App V2", type: "lider", workRequired: 90, canBeDelayed: false },
   { name: "Desvincular proveedor fraudulento", type: "lider", workRequired: 110, canBeDelayed: false },
-  { name: "Presentar informe a la Junta", type: "lider", workRequired: 160, canBeDelayed: false },
+  { name: "Dar feedback a practicante", type: "lider", workRequired: 90, canBeDelayed: false },
   { name: "Resolver bloqueo legal de la App", type: "lider", workRequired: 130, canBeDelayed: false },
-  { name: "Aprobar reestructuración contable", type: "lider", workRequired: 100, canBeDelayed: false },
   { name: "Declarar retraso de la App V2", type: "lider", workRequired: 150, canBeDelayed: false },
 
-  // URGENTES (15)
+  // URGENTES (Para Mateo)
   { name: "Caída de servidor App V2", type: "urgente", workRequired: 90, canBeDelayed: false },
   { name: "Enviar documentos contables YA", type: "urgente", workRequired: 80, canBeDelayed: false },
   { name: "Bug crítico en pasarela App V2", type: "urgente", workRequired: 120, canBeDelayed: false },
@@ -76,15 +87,8 @@ const MASTER_TASK_POOL = [
   { name: "Reembolso por error App V2", type: "urgente", workRequired: 100, canBeDelayed: false },
   { name: "Firma urgente de servidores", type: "urgente", workRequired: 70, canBeDelayed: false },
   { name: "Inspección sorpresa de auditores", type: "urgente", workRequired: 110, canBeDelayed: false },
-  { name: "Descuadre contable grave", type: "urgente", workRequired: 90, canBeDelayed: false },
-  { name: "Campaña App V2 bloqueada", type: "urgente", workRequired: 85, canBeDelayed: false },
-  { name: "Fallo de seguridad en la App", type: "urgente", workRequired: 120, canBeDelayed: false },
-  { name: "Responder hallazgo de auditoría", type: "urgente", workRequired: 90, canBeDelayed: false },
-  { name: "Robo de laptop con código App", type: "urgente", workRequired: 60, canBeDelayed: false },
-  { name: "Pagar impuestos atrasados", type: "urgente", workRequired: 80, canBeDelayed: false },
-  { name: "Rumor de quiebra en prensa", type: "urgente", workRequired: 100, canBeDelayed: false },
 
-  // COMPLEJAS (15)
+  // COMPLEJAS (Para Sofía)
   { name: "Armar plan de marketing App V2", type: "compleja", workRequired: 140, canBeDelayed: false },
   { name: "Revisar arquitectura App V2", type: "compleja", workRequired: 150, canBeDelayed: false },
   { name: "Auditoría de ciberseguridad", type: "compleja", workRequired: 130, canBeDelayed: false },
@@ -93,37 +97,23 @@ const MASTER_TASK_POOL = [
   { name: "Revisión financiera interna", type: "compleja", workRequired: 120, canBeDelayed: false },
   { name: "Crear manual de usuario App V2", type: "compleja", workRequired: 110, canBeDelayed: false },
   { name: "Estructurar cuentas auditoría", type: "compleja", workRequired: 140, canBeDelayed: false },
-  { name: "Optimizar embudo de la App", type: "compleja", workRequired: 120, canBeDelayed: false },
-  { name: "Simulación de estrés financiero", type: "compleja", workRequired: 150, canBeDelayed: false },
-  { name: "Rediseñar interfaz App V2", type: "compleja", workRequired: 130, canBeDelayed: false },
-  { name: "Mapear procesos para auditores", type: "compleja", workRequired: 140, canBeDelayed: false },
-  { name: "Integrar IA en la App V2", type: "compleja", workRequired: 160, canBeDelayed: false },
-  { name: "Evaluar impacto fiscal anual", type: "compleja", workRequired: 180, canBeDelayed: false },
-  { name: "Testeo de carga servidores App", type: "compleja", workRequired: 110, canBeDelayed: false },
 
-  // RUTINARIAS - IMPORTANTES (5)
+  // RUTINARIAS - IMPORTANTES (Para Valeria)
   { name: "Enviar facturas a auditores", type: "rutinaria", workRequired: 40, canBeDelayed: false },
   { name: "Agendar QA para App V2", type: "rutinaria", workRequired: 50, canBeDelayed: false },
   { name: "Conciliar cuentas de banco", type: "rutinaria", workRequired: 30, canBeDelayed: false },
   { name: "Contestar dudas de auditores", type: "rutinaria", workRequired: 20, canBeDelayed: false },
   { name: "Aprobar gastos de desarrollo", type: "rutinaria", workRequired: 60, canBeDelayed: false },
 
-  // RUTINARIAS - PUEDEN RETRASARSE (Icebox) (15)
+  // RUTINARIAS - PUEDEN RETRASARSE (Icebox)
   { name: "Limpiar bandeja de spam", type: "rutinaria", workRequired: 30, canBeDelayed: true },
   { name: "Buscar memes para el chat", type: "rutinaria", workRequired: 20, canBeDelayed: true },
   { name: "Cambiar fondo de pantalla", type: "rutinaria", workRequired: 10, canBeDelayed: true },
   { name: "Actualizar foto de perfil", type: "rutinaria", workRequired: 15, canBeDelayed: true },
   { name: "Revisar boletín del sector", type: "rutinaria", workRequired: 25, canBeDelayed: true },
-  { name: "Leer blog de tecnología", type: "rutinaria", workRequired: 30, canBeDelayed: true },
-  { name: "Investigar nueva cafetera", type: "rutinaria", workRequired: 20, canBeDelayed: true },
-  { name: "Encuesta de clima laboral", type: "rutinaria", workRequired: 40, canBeDelayed: true },
   { name: "Planear fiesta de fin de año", type: "rutinaria", workRequired: 50, canBeDelayed: true },
-  { name: "Acomodar escritorio", type: "rutinaria", workRequired: 10, canBeDelayed: true },
   { name: "Comprar snacks de oficina", type: "rutinaria", workRequired: 20, canBeDelayed: true },
-  { name: "Decorar para Halloween", type: "rutinaria", workRequired: 30, canBeDelayed: true },
-  { name: "Actualizar firma de correo genérica", type: "rutinaria", workRequired: 15, canBeDelayed: true },
-  { name: "Ver tutorial de Excel básico", type: "rutinaria", workRequired: 45, canBeDelayed: true },
-  { name: "Organizar fotos antiguas", type: "rutinaria", workRequired: 40, canBeDelayed: true }
+  { name: "Ver tutorial de Excel básico", type: "rutinaria", workRequired: 45, canBeDelayed: true }
 ];
 
 const ONE_ON_ONE_SCENARIOS = [
@@ -245,9 +235,9 @@ export default function GameUI() {
   const [wrongAssignments, setWrongAssignments] = useState(0); 
   const [badAnswers, setBadAnswers] = useState(0);
   const [leaderRutinarias, setLeaderRutinarias] = useState(0);
+  const [wrongAiAssignments, setWrongAiAssignments] = useState(0);
 
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
-  
   const [activeModal, setActiveModal] = useState<{empId: string, questions: any[], type: '1:1' | 'help'} | null>(null);
   const [lifeLostModal, setLifeLostModal] = useState<number | null>(null);
 
@@ -255,12 +245,10 @@ export default function GameUI() {
   const [pool1on1, setPool1on1] = useState<any[]>([]);
   const [poolHelp, setPoolHelp] = useState<any[]>([]);
   
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-
-  const stateRef = useRef({ employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments, generatedTasks });
+  const stateRef = useRef({ employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments, generatedTasks, wrongAiAssignments });
   useEffect(() => {
-    stateRef.current = { employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments, generatedTasks };
-  }, [employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments, generatedTasks]);
+    stateRef.current = { employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments, generatedTasks, wrongAiAssignments };
+  }, [employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments, generatedTasks, wrongAiAssignments]);
 
   const ticksRef = useRef(0);
 
@@ -271,33 +259,6 @@ export default function GameUI() {
       [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
     }
     return newArr;
-  };
-
-  useEffect(() => {
-    // Cargar leaderboard al inicio
-    const saved = localStorage.getItem('cdl_leaderboard');
-    if (saved) {
-      try { setLeaderboard(JSON.parse(saved)); } catch (e) {}
-    }
-  }, []);
-
-  const saveToLeaderboard = () => {
-    const wrongDelayed = icebox.filter(t => !t.canBeDelayed).length;
-    const burnedOutEmployees = employees.filter(e => e.maxStress >= 100 && e.id !== "leader").length;
-
-    const entry: LeaderboardEntry = {
-      name: leaderName,
-      score: score,
-      burnouts: burnedOutEmployees,
-      livesLost: livesLostCount,
-      wrongAssignments: wrongAssignments,
-      wrongIcebox: wrongDelayed,
-      date: Date.now()
-    };
-    
-    const newList = [...leaderboard, entry].sort((a, b) => b.score - a.score).slice(0, 10);
-    setLeaderboard(newList);
-    localStorage.setItem('cdl_leaderboard', JSON.stringify(newList));
   };
 
   // Game Loop
@@ -403,20 +364,25 @@ export default function GameUI() {
             }
           }
 
+          if (emp.isAi) {
+            progressStep *= 2.0;
+            stressStep = 0.0;
+          }
+
           const newWorkDone = emp.currentTask.workDone + progressStep;
           const newStress = Math.min(100, emp.stress + stressStep);
           const newMaxStress = Math.max(emp.maxStress, newStress);
 
-          if (Math.random() < 0.005 && emp.id !== "leader") {
+          if (Math.random() < 0.005 && emp.id !== "leader" && !emp.isAi) {
             return { ...emp, isAskingHelp: true, stress: newStress, maxStress: newMaxStress };
           }
 
-          if (Math.random() < 0.002 && emp.id !== "leader") {
+          if (Math.random() < 0.002 && emp.id !== "leader" && !emp.isAi) {
             newBacklog.push(emp.currentTask);
             return { ...emp, isBurnedOut: true, currentTask: null, stress: 100, maxStress: 100 };
           }
 
-          if (newStress >= 100) {
+          if (newStress >= 100 && !emp.isAi) {
             newBacklog.push(emp.currentTask);
             return { ...emp, isBurnedOut: true, currentTask: null, stress: 100, maxStress: 100 }; 
           }
@@ -493,6 +459,9 @@ export default function GameUI() {
 
     if (emp.id !== "leader" && taskToAssign.type !== emp.bestTask) {
       setWrongAssignments(prev => prev + 1);
+    }
+    if (emp.isAi && taskToAssign.type === "lider") {
+      setWrongAiAssignments(prev => prev + 1);
     }
     if (emp.id === "leader" && taskToAssign.type === "rutinaria") {
       setLeaderRutinarias(prev => prev + 1);
@@ -638,6 +607,7 @@ export default function GameUI() {
     setWrongAssignments(0);
     setBadAnswers(0);
     setLeaderRutinarias(0);
+    setWrongAiAssignments(0);
     setScore(0);
     setTimeLeft(120);
     setLives(3);
@@ -667,11 +637,14 @@ export default function GameUI() {
       feedback += `⚖️ Priorización: No archivaste suficientes tareas triviales. ¡Aprende a decir "no" a lo irrelevante para ganar tiempo!\n\n`;
     }
 
-    // 2. Delegación
+    // 2. Delegación y AI
+    if (wrongAiAssignments > 0) {
+      feedback += `🤖 Límite Humano-AI: Le delegaste a la Inteligencia Artificial tareas que requieren liderazgo, empatía humana o estrategia profunda (${wrongAiAssignments} veces). ¡No automatices el toque humano!\n\n`;
+    }
     if (wrongAssignments > 2) {
       feedback += `⚠️ Asignación: Le diste tareas al perfil equivocado ${wrongAssignments} veces. Conoce mejor a tu equipo. \n\n`;
     } else {
-      feedback += `🏆 Maestro delegando: Asignaste cada tarea exactamente a la persona correcta casi sin fallar. \n\n`;
+      feedback += `🏆 Maestro delegando: Asignaste cada tarea exactamente a la persona o AI correcta casi sin fallar. \n\n`;
     }
     
     // 3. Salud Mental
@@ -1063,36 +1036,7 @@ export default function GameUI() {
               {getFeedback()}
             </div>
             
-            {/* RANKING (Leaderboard) */}
-            {leaderboard.length > 0 && (
-              <div className="bg-slate-800/50 rounded-xl p-4 mb-6 text-left border border-slate-700/50 overflow-x-auto">
-                 <h4 className="font-bold text-white mb-3 uppercase text-[10px] tracking-wider flex items-center gap-1"><Trophy size={12} className="text-amber-400"/> Salón de la Fama Corporativo</h4>
-                 <table className="w-full text-xs text-left text-slate-400">
-                    <thead className="text-[9px] uppercase bg-slate-900/50 text-slate-500">
-                       <tr>
-                          <th className="px-2 py-1.5 rounded-l-md">Rank</th>
-                          <th className="px-2 py-1.5">Líder</th>
-                          <th className="px-2 py-1.5">Puntos</th>
-                          <th className="px-2 py-1.5">Burnouts</th>
-                          <th className="px-2 py-1.5">Errores Asign.</th>
-                          <th className="px-2 py-1.5 rounded-r-md">Vidas G.</th>
-                       </tr>
-                    </thead>
-                    <tbody>
-                       {leaderboard.map((entry, i) => (
-                          <tr key={i} className={`border-b border-slate-700/50 last:border-0 ${entry.date === Date.now() ? 'bg-indigo-900/30' : ''}`}>
-                             <td className="px-2 py-2 font-bold">{i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`}</td>
-                             <td className="px-2 py-2 text-white font-medium">{entry.name}</td>
-                             <td className="px-2 py-2 text-amber-400 font-bold">{entry.score}</td>
-                             <td className="px-2 py-2">{entry.burnouts}</td>
-                             <td className="px-2 py-2">{entry.wrongAssignments}</td>
-                             <td className="px-2 py-2 text-red-400">{entry.livesLost}</td>
-                          </tr>
-                       ))}
-                    </tbody>
-                 </table>
-              </div>
-            )}
+            {/* RANKING (Leaderboard) eliminado */}
 
             <div className="grid grid-cols-3 gap-2 text-left mb-6 bg-slate-900/30 p-4 rounded-xl">
               <div>
