@@ -127,20 +127,97 @@ const MASTER_TASK_POOL = [
 ];
 
 const ONE_ON_ONE_SCENARIOS = [
-  { q: "Siento que el cliente me falta el respeto y no aguanto más la presión.", opts: [{ t: "Es parte del trabajo, respira.", res: "bad" }, { t: "Yo hablaré con él. Tómate 10 min.", res: "good" }, { t: "Ignóralo y concéntrate.", res: "bad" }] },
-  { q: "Tengo demasiado estrés por el lanzamiento y siento que voy a colapsar.", opts: [{ t: "Desconéctate 30 minutos y tómate un café.", res: "good" }, { t: "Todos estamos estresados, aguanta.", res: "bad" }, { t: "Termina esto y luego descansas.", res: "bad" }] },
-  { q: "Los auditores me están pidiendo cosas que no entiendo, estoy frustrado.", opts: [{ t: "Diles que esperen o que hablen conmigo.", res: "good" }, { t: "Búscalo en Google.", res: "bad" }, { t: "Resuélvelo rápido, es urgente.", res: "bad" }] },
-  { q: "Siento que me asignan tareas que no van con mi perfil y me frustra.", opts: [{ t: "Haz el esfuerzo, necesitamos manos.", res: "bad" }, { t: "Lo tendré en cuenta para la próxima, gracias por avisar.", res: "good" }, { t: "Es lo que hay hoy.", res: "bad" }] },
-  { q: "He estado cometiendo muchos errores hoy por el estrés.", opts: [{ t: "Ten más cuidado, no podemos fallar.", res: "bad" }, { t: "Tranquilo, respira, revisaremos juntos el próximo.", res: "good" }, { t: "Concéntrate más.", res: "bad" }] }
+  { 
+    q: "Siento que el cliente me falta el respeto y no aguanto más la presión.", 
+    opts: [
+      { t: "Nadie debe faltarte al respeto. Respira 10 min, yo hablaré con el cliente para fijar límites.", res: "good" }, 
+      { t: "Pásame la tarea a mí, yo me encargo de todo para que no sufras.", res: "bad" }, 
+      { t: "Es un cliente VIP, a veces toca aguantar. Trata de no tomarlo personal.", res: "bad" }
+    ] 
+  },
+  { 
+    q: "Tengo demasiado estrés por el lanzamiento y siento que voy a colapsar.", 
+    opts: [
+      { t: "Pausa todo. Vamos a priorizar juntos qué es vital hoy y qué puede esperar.", res: "good" }, 
+      { t: "Todos estamos igual, es el lanzamiento. Toma café y sigamos, ya casi.", res: "bad" }, 
+      { t: "Si no puedes con la presión, le asignaré estas tareas a otra persona.", res: "bad" }
+    ] 
+  },
+  { 
+    q: "Los auditores me están pidiendo cosas que no entiendo, estoy frustrado.", 
+    opts: [
+      { t: "Revisemos juntos qué piden y te guío para que aprendas a responderles.", res: "good" }, 
+      { t: "Diles que hablen conmigo directamente, yo resuelvo todo con ellos.", res: "bad" }, 
+      { t: "Busca en el manual de procedimientos o en Google, es tu responsabilidad.", res: "bad" }
+    ] 
+  },
+  { 
+    q: "Siento que me asignan tareas que no van con mi perfil y me frustra.", 
+    opts: [
+      { t: "Tienes razón. Hoy es contingencia, pero mañana alinearemos mejor tus tareas.", res: "good" }, 
+      { t: "Es lo que la empresa necesita hoy. Tienes que ser más flexible.", res: "bad" }, 
+      { t: "Si no te gusta, deja la tarea y que la tome otro que sí quiera trabajar.", res: "bad" }
+    ] 
+  },
+  { 
+    q: "He estado cometiendo muchos errores hoy por el estrés.", 
+    opts: [
+      { t: "Los errores pasan. Toma 5 min de pausa, luego hacemos un doble chequeo juntos.", res: "good" }, 
+      { t: "Dame esas tareas a mí. Yo las terminaré para asegurar que queden bien.", res: "bad" }, 
+      { t: "Concéntrate más, un error en esta auditoría nos puede costar carísimo.", res: "bad" }
+    ] 
+  }
 ];
 
 const SUPPORT_SCENARIOS = [
-  { q: "Jefe, no entiendo cómo llenar este campo del reporte, ¿me explicas?", opts: [{ t: "Lee el manual de nuevo, está ahí.", res: "bad" }, { t: "Pon cualquier cosa por ahora.", res: "bad" }, { t: "Ven, te muestro cómo es el formato.", res: "good" }] },
-  { q: "La plataforma arrojó un error 500 y no sé qué hacer con esta tarea.", opts: [{ t: "Cancela la tarea, no se puede hacer.", res: "bad" }, { t: "Llama a IT e infórmame cuando te respondan.", res: "good" }, { t: "Sigue intentando hasta que funcione.", res: "bad" }] },
-  { q: "El proveedor dice que no puede entregarnos hoy. ¿Qué le digo?", opts: [{ t: "Dile que es inaceptable y presionalo.", res: "good" }, { t: "Dile que no hay problema.", res: "bad" }, { t: "Resuélvelo tú, para eso te pago.", res: "bad" }] },
-  { q: "Tengo un problema con el VPN, no me conecta a la red interna.", opts: [{ t: "Reinicia tu computadora, siempre funciona.", res: "bad" }, { t: "Abre un ticket con soporte técnico ahora.", res: "good" }, { t: "Usa tu internet personal sin VPN.", res: "bad" }] },
-  { q: "El cliente me pide una funcionalidad que no está en el contrato.", opts: [{ t: "Hazla rápido para que esté feliz.", res: "bad" }, { t: "Dile que no rotundamente y cuelga.", res: "bad" }, { t: "Explícale amablemente que requiere cotización extra.", res: "good" }] },
-  { q: "Encontré una inconsistencia millonaria en los libros, ¿qué hago?", opts: [{ t: "Ignórala, que la vea el auditor.", res: "bad" }, { t: "Pásamela directo a mí, la reviso urgente.", res: "good" }, { t: "Arréglala como puedas.", res: "bad" }] }
+  { 
+    q: "Jefe, no entiendo cómo llenar este campo del reporte, ¿me explicas?", 
+    opts: [
+      { t: "Revisemos el formato juntos un par de minutos para que sepas hacerlo a futuro.", res: "good" }, 
+      { t: "Pon cualquier valor estimado por ahora, lo importante es entregarlo rápido.", res: "bad" }, 
+      { t: "Lee el manual de contabilidad. No tengo tiempo para cosas operativas.", res: "bad" }
+    ] 
+  },
+  { 
+    q: "La plataforma de la App arrojó un error 500 y no sé qué hacer.", 
+    opts: [
+      { t: "Documenta el error con pantallazos, escala a IT y avísame el tiempo estimado.", res: "good" }, 
+      { t: "Sigue intentando recargar la página hasta que funcione, a veces colapsa.", res: "bad" }, 
+      { t: "Cancela la tarea, si el sistema no sirve no es nuestra culpa, que esperen.", res: "bad" }
+    ] 
+  },
+  { 
+    q: "El proveedor dice que no puede entregarnos hoy. ¿Qué le digo?", 
+    opts: [
+      { t: "Pídele que justifique el retraso por correo y evalúa con él opciones alternativas.", res: "good" }, 
+      { t: "Dile que es inaceptable, exígele que cumpla el contrato o lo demandaremos.", res: "bad" }, 
+      { t: "Dile que no hay problema, reprograma todo para mañana y listo.", res: "bad" }
+    ] 
+  },
+  { 
+    q: "Tengo un problema con el VPN, no me conecta a la red interna.", 
+    opts: [
+      { t: "Abre un ticket con soporte de inmediato y avanza con tareas locales mientras.", res: "good" }, 
+      { t: "Reinicia tu computadora y el router, eso siempre funciona en estos casos.", res: "bad" }, 
+      { t: "Usa tu red personal sin la VPN para sacar lo urgente, no podemos atrasarnos.", res: "bad" }
+    ] 
+  },
+  { 
+    q: "El cliente me pide una funcionalidad que no está en el contrato.", 
+    opts: [
+      { t: "Explícale amablemente que está fuera del alcance y ofrece agendar para cotizarla.", res: "good" }, 
+      { t: "Dile que sí, pero que tardará. Hay que mantener al cliente feliz a toda costa.", res: "bad" }, 
+      { t: "Dile rotundamente que no y que lea el contrato que firmó.", res: "bad" }
+    ] 
+  },
+  { 
+    q: "Encontré una inconsistencia millonaria en los libros, ¿qué hago?", 
+    opts: [
+      { t: "Aísla esos registros. Haz un informe rápido y lo revisamos juntos antes de escalar.", res: "good" }, 
+      { t: "Pásamela directo a mí en este instante, yo me encargo de los auditores.", res: "bad" }, 
+      { t: "Intenta cuadrarlo con gastos varios para que la auditoría no levante hallazgo.", res: "bad" }
+    ] 
+  }
 ];
 
 export default function GameUI() {
