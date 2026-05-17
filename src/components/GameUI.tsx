@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, ShieldAlert, BrainCircuit, FileText, UserPlus, Flame, CheckCircle, Play, MessageCircle, AlertTriangle, Zap, Clock, Star, HelpCircle, Stethoscope, Archive, Target, BarChart2 } from "lucide-react";
+import { Heart, ShieldAlert, BrainCircuit, FileText, UserPlus, Flame, CheckCircle, Play, MessageCircle, AlertTriangle, Zap, Clock, Star, HelpCircle, Stethoscope, Archive, Target, BarChart2, Trophy } from "lucide-react";
 
 // --- TIPOS DE DATOS ---
 type TaskType = 'urgente' | 'compleja' | 'rutinaria' | 'lider';
@@ -23,8 +23,8 @@ interface Employee {
   role: string;
   avatar: string;
   stress: number;
-  maxStress: number; // Para el gráfico final
-  tasksAssigned: number; // Para el gráfico final
+  maxStress: number; 
+  tasksAssigned: number; 
   currentTask: Task | null;
   bestTask: TaskType | 'all';
   timeSpentWorkingMs: number;
@@ -32,7 +32,17 @@ interface Employee {
   tasksDone: number; 
   isAskingHelp: boolean; 
   isMedical: boolean; 
-  medicalTimer: number; // 100 ticks = 10 segundos
+  medicalTimer: number; 
+}
+
+interface LeaderboardEntry {
+  name: string;
+  score: number;
+  burnouts: number;
+  livesLost: number;
+  wrongAssignments: number;
+  wrongIcebox: number;
+  date: number;
 }
 
 // --- CONFIGURACIÓN DEL NIVEL ---
@@ -118,73 +128,20 @@ const MASTER_TASK_POOL = [
 ];
 
 const ONE_ON_ONE_SCENARIOS = [
-  {
-    q: "Siento que el cliente me falta el respeto y no aguanto más la presión.",
-    opts: [
-      { t: "Es parte del trabajo, respira.", res: "bad" },
-      { t: "Yo hablaré con él. Tómate 10 min.", res: "good" },
-      { t: "Ignóralo y concéntrate.", res: "bad" }
-    ]
-  },
-  {
-    q: "Tengo demasiado estrés por el lanzamiento y siento que voy a colapsar.",
-    opts: [
-      { t: "Desconéctate 30 minutos y tómate un café.", res: "good" },
-      { t: "Todos estamos estresados, aguanta.", res: "bad" },
-      { t: "Termina esto y luego descansas.", res: "bad" }
-    ]
-  },
-  {
-    q: "Los auditores me están pidiendo cosas que no entiendo, estoy frustrado.",
-    opts: [
-      { t: "Diles que esperen o que hablen conmigo.", res: "good" },
-      { t: "Búscalo en Google.", res: "bad" },
-      { t: "Resuélvelo rápido, es urgente.", res: "bad" }
-    ]
-  }
+  { q: "Siento que el cliente me falta el respeto y no aguanto más la presión.", opts: [{ t: "Es parte del trabajo, respira.", res: "bad" }, { t: "Yo hablaré con él. Tómate 10 min.", res: "good" }, { t: "Ignóralo y concéntrate.", res: "bad" }] },
+  { q: "Tengo demasiado estrés por el lanzamiento y siento que voy a colapsar.", opts: [{ t: "Desconéctate 30 minutos y tómate un café.", res: "good" }, { t: "Todos estamos estresados, aguanta.", res: "bad" }, { t: "Termina esto y luego descansas.", res: "bad" }] },
+  { q: "Los auditores me están pidiendo cosas que no entiendo, estoy frustrado.", opts: [{ t: "Diles que esperen o que hablen conmigo.", res: "good" }, { t: "Búscalo en Google.", res: "bad" }, { t: "Resuélvelo rápido, es urgente.", res: "bad" }] },
+  { q: "Siento que me asignan tareas que no van con mi perfil y me frustra.", opts: [{ t: "Haz el esfuerzo, necesitamos manos.", res: "bad" }, { t: "Lo tendré en cuenta para la próxima, gracias por avisar.", res: "good" }, { t: "Es lo que hay hoy.", res: "bad" }] },
+  { q: "He estado cometiendo muchos errores hoy por el estrés.", opts: [{ t: "Ten más cuidado, no podemos fallar.", res: "bad" }, { t: "Tranquilo, respira, revisaremos juntos el próximo.", res: "good" }, { t: "Concéntrate más.", res: "bad" }] }
 ];
 
 const SUPPORT_SCENARIOS = [
-  {
-    q: "Jefe, no entiendo cómo llenar este campo del reporte, ¿me explicas?",
-    opts: [
-      { t: "Lee el manual de nuevo, está ahí.", res: "bad" },
-      { t: "Pon cualquier cosa por ahora.", res: "bad" },
-      { t: "Ven, te muestro cómo es el formato.", res: "good" }
-    ]
-  },
-  {
-    q: "La plataforma arrojó un error 500 y no sé qué hacer con esta tarea.",
-    opts: [
-      { t: "Cancela la tarea, no se puede hacer.", res: "bad" },
-      { t: "Llama a IT e infórmame cuando te respondan.", res: "good" },
-      { t: "Sigue intentando hasta que funcione.", res: "bad" }
-    ]
-  },
-  {
-    q: "El proveedor dice que no puede entregarnos hoy. ¿Qué le digo?",
-    opts: [
-      { t: "Dile que es inaceptable y presionalo.", res: "good" },
-      { t: "Dile que no hay problema.", res: "bad" },
-      { t: "Resuélvelo tú, para eso te pago.", res: "bad" }
-    ]
-  },
-  {
-    q: "Tengo un problema con el VPN, no me conecta a la red interna.",
-    opts: [
-      { t: "Reinicia tu computadora, siempre funciona.", res: "bad" },
-      { t: "Abre un ticket con soporte técnico ahora.", res: "good" },
-      { t: "Usa tu internet personal sin VPN.", res: "bad" }
-    ]
-  },
-  {
-    q: "El cliente me pide una funcionalidad que no está en el contrato.",
-    opts: [
-      { t: "Hazla rápido para que esté feliz.", res: "bad" },
-      { t: "Dile que no rotundamente y cuelga.", res: "bad" },
-      { t: "Explícale amablemente que requiere cotización extra.", res: "good" }
-    ]
-  }
+  { q: "Jefe, no entiendo cómo llenar este campo del reporte, ¿me explicas?", opts: [{ t: "Lee el manual de nuevo, está ahí.", res: "bad" }, { t: "Pon cualquier cosa por ahora.", res: "bad" }, { t: "Ven, te muestro cómo es el formato.", res: "good" }] },
+  { q: "La plataforma arrojó un error 500 y no sé qué hacer con esta tarea.", opts: [{ t: "Cancela la tarea, no se puede hacer.", res: "bad" }, { t: "Llama a IT e infórmame cuando te respondan.", res: "good" }, { t: "Sigue intentando hasta que funcione.", res: "bad" }] },
+  { q: "El proveedor dice que no puede entregarnos hoy. ¿Qué le digo?", opts: [{ t: "Dile que es inaceptable y presionalo.", res: "good" }, { t: "Dile que no hay problema.", res: "bad" }, { t: "Resuélvelo tú, para eso te pago.", res: "bad" }] },
+  { q: "Tengo un problema con el VPN, no me conecta a la red interna.", opts: [{ t: "Reinicia tu computadora, siempre funciona.", res: "bad" }, { t: "Abre un ticket con soporte técnico ahora.", res: "good" }, { t: "Usa tu internet personal sin VPN.", res: "bad" }] },
+  { q: "El cliente me pide una funcionalidad que no está en el contrato.", opts: [{ t: "Hazla rápido para que esté feliz.", res: "bad" }, { t: "Dile que no rotundamente y cuelga.", res: "bad" }, { t: "Explícale amablemente que requiere cotización extra.", res: "good" }] },
+  { q: "Encontré una inconsistencia millonaria en los libros, ¿qué hago?", opts: [{ t: "Ignórala, que la vea el auditor.", res: "bad" }, { t: "Pásamela directo a mí, la reviso urgente.", res: "good" }, { t: "Arréglala como puedas.", res: "bad" }] }
 ];
 
 export default function GameUI() {
@@ -196,8 +153,9 @@ export default function GameUI() {
   const [winStatus, setWinStatus] = useState(false);
   
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(120); // 120 segundos = 2 minutos
+  const [timeLeft, setTimeLeft] = useState(120); 
   const [lives, setLives] = useState(3);
+  const [livesLostCount, setLivesLostCount] = useState(0);
   
   const [totalTaskTimeMs, setTotalTaskTimeMs] = useState(0);
 
@@ -208,11 +166,18 @@ export default function GameUI() {
 
   const [completedTasks, setCompletedTasks] = useState(0);
   const [wrongAssignments, setWrongAssignments] = useState(0); 
+  const [badAnswers, setBadAnswers] = useState(0);
 
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   
-  const [activeModal, setActiveModal] = useState<{empId: string, step: number, questions: any[], type: '1:1' | 'help'} | null>(null);
+  const [activeModal, setActiveModal] = useState<{empId: string, questions: any[], type: '1:1' | 'help'} | null>(null);
   const [lifeLostModal, setLifeLostModal] = useState<number | null>(null);
+
+  // Pool de preguntas barajadas
+  const [pool1on1, setPool1on1] = useState<any[]>([]);
+  const [poolHelp, setPoolHelp] = useState<any[]>([]);
+  
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
   const stateRef = useRef({ employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments });
   useEffect(() => {
@@ -228,6 +193,33 @@ export default function GameUI() {
       [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
     }
     return newArr;
+  };
+
+  useEffect(() => {
+    // Cargar leaderboard al inicio
+    const saved = localStorage.getItem('cdl_leaderboard');
+    if (saved) {
+      try { setLeaderboard(JSON.parse(saved)); } catch (e) {}
+    }
+  }, []);
+
+  const saveToLeaderboard = () => {
+    const wrongDelayed = icebox.filter(t => !t.canBeDelayed).length;
+    const burnedOutEmployees = employees.filter(e => e.maxStress >= 100 && e.id !== "leader").length;
+
+    const entry: LeaderboardEntry = {
+      name: leaderName,
+      score: score,
+      burnouts: burnedOutEmployees,
+      livesLost: livesLostCount,
+      wrongAssignments: wrongAssignments,
+      wrongIcebox: wrongDelayed,
+      date: Date.now()
+    };
+    
+    const newList = [...leaderboard, entry].sort((a, b) => b.score - a.score).slice(0, 10);
+    setLeaderboard(newList);
+    localStorage.setItem('cdl_leaderboard', JSON.stringify(newList));
   };
 
   // Game Loop
@@ -276,6 +268,7 @@ export default function GameUI() {
       // Penalización por 13 tareas
       if (newBacklog.length >= 13) {
         newLives -= 1;
+        setLivesLostCount(prev => prev + 1);
         let toRemove = 7;
         while (toRemove > 0 && newBacklog.length > 0) {
            const randomIndex = Math.floor(Math.random() * newBacklog.length);
@@ -290,6 +283,7 @@ export default function GameUI() {
         if (newLives <= 0) {
           setIsGameOver(true);
           setWinStatus(false);
+          saveToLeaderboard();
           return;
         } else {
           setLifeLostModal(newLives);
@@ -313,7 +307,7 @@ export default function GameUI() {
         if (emp.currentTask) {
           const taskType = emp.currentTask.type;
           let progressStep = 1.0;
-          let stressStep = 0.6; // Incremento de estrés para forzar más 1:1
+          let stressStep = 0.6;
 
           if (emp.id === "leader") {
             if (taskType === 'lider') {
@@ -325,7 +319,7 @@ export default function GameUI() {
             if (taskType === emp.bestTask) {
               progressStep = 3.0; stressStep = 0.2; 
             } else {
-              progressStep = 0.5; stressStep = 3.5; // Gran penalización
+              progressStep = 0.5; stressStep = 3.5;
             }
           }
 
@@ -333,18 +327,15 @@ export default function GameUI() {
           const newStress = Math.min(100, emp.stress + stressStep);
           const newMaxStress = Math.max(emp.maxStress, newStress);
 
-          // Dudas técnicas
           if (Math.random() < 0.005 && emp.id !== "leader") {
             return { ...emp, isAskingHelp: true, stress: newStress, maxStress: newMaxStress };
           }
 
-          // Forzar un 1:1 aleatorio (simulando que explotaron de estrés por algo externo)
           if (Math.random() < 0.002 && emp.id !== "leader") {
             newBacklog.push(emp.currentTask);
             return { ...emp, isBurnedOut: true, currentTask: null, stress: 100, maxStress: 100 };
           }
 
-          // Burnout natural por estrés al 100
           if (newStress >= 100) {
             newBacklog.push(emp.currentTask);
             return { ...emp, isBurnedOut: true, currentTask: null, stress: 100, maxStress: 100 }; 
@@ -393,6 +384,7 @@ export default function GameUI() {
         if (prev <= 1) {
           setIsGameOver(true);
           setWinStatus(true);
+          saveToLeaderboard();
           return 0;
         }
         return prev - 1;
@@ -427,20 +419,35 @@ export default function GameUI() {
     setSelectedTaskId(null);
   };
 
+  const getQuestionFromPool = (type: '1:1' | 'help') => {
+    if (type === '1:1') {
+      let pool = [...pool1on1];
+      if (pool.length === 0) pool = shuffle([...ONE_ON_ONE_SCENARIOS]);
+      const q = pool.pop();
+      setPool1on1(pool);
+      return q;
+    } else {
+      let pool = [...poolHelp];
+      if (pool.length === 0) pool = shuffle([...SUPPORT_SCENARIOS]);
+      const q = pool.pop();
+      setPoolHelp(pool);
+      return q;
+    }
+  };
+
   const handleEmployeeClick = (empId: string) => {
     const emp = employees.find(e => e.id === empId);
     if (!emp || emp.isMedical) return;
 
     if (emp.isAskingHelp && emp.id !== "leader") {
-      const q = SUPPORT_SCENARIOS[Math.floor(Math.random() * SUPPORT_SCENARIOS.length)];
-      setActiveModal({ empId, step: 0, questions: [q], type: 'help' });
+      const q = getQuestionFromPool('help');
+      setActiveModal({ empId, questions: [q], type: 'help' });
       return;
     }
 
     if (emp.isBurnedOut && emp.id !== "leader") {
-      const q1 = ONE_ON_ONE_SCENARIOS[Math.floor(Math.random() * ONE_ON_ONE_SCENARIOS.length)];
-      const q2 = ONE_ON_ONE_SCENARIOS[Math.floor(Math.random() * ONE_ON_ONE_SCENARIOS.length)];
-      setActiveModal({ empId, step: 0, questions: [q1, q2], type: '1:1' });
+      const q = getQuestionFromPool('1:1');
+      setActiveModal({ empId, questions: [q], type: '1:1' });
       return;
     }
 
@@ -452,7 +459,7 @@ export default function GameUI() {
     }
   };
 
-  const handleDragStart = (e: React.DragEvent, taskId: string) => {
+  const handleDragStart = (e: any, taskId: string) => {
     e.dataTransfer.setData("taskId", taskId);
     setSelectedTaskId(taskId);
   };
@@ -465,7 +472,9 @@ export default function GameUI() {
 
   const handleIceboxDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    const taskId = e.dataTransfer.getData("taskId");
+    let taskId = e.dataTransfer.getData("taskId");
+    if (!taskId && selectedTaskId) taskId = selectedTaskId; // Para dar click y enviar al icebox si se hizo click primero
+    
     const task = backlog.find(t => t.id === taskId);
     if (task) {
       setIcebox(prev => [...prev, task]);
@@ -477,19 +486,16 @@ export default function GameUI() {
   const handleModalAnswer = (result: string) => {
     if (!activeModal) return;
     
+    if (result !== 'good') setBadAnswers(prev => prev + 1);
+
     if (activeModal.type === '1:1') {
       if (result === 'good') {
         setEmployees(prev => prev.map(e => e.id === activeModal.empId ? { ...e, stress: 0, isBurnedOut: false } : e));
         setScore(s => s + 50);
       } else {
-        setEmployees(prev => prev.map(e => e.id === activeModal.empId ? { ...e, stress: 60 } : e));
+        setEmployees(prev => prev.map(e => e.id === activeModal.empId ? { ...e, stress: Math.min(100, e.stress + 60), isBurnedOut: false } : e));
       }
-      
-      if (activeModal.step === 0 && activeModal.questions.length > 1) {
-        setActiveModal({ ...activeModal, step: 1 });
-      } else {
-        setActiveModal(null);
-      }
+      setActiveModal(null);
     } else if (activeModal.type === 'help') {
       if (result === 'good') {
         setEmployees(prev => prev.map(e => e.id === activeModal.empId ? { ...e, isAskingHelp: false } : e));
@@ -519,6 +525,8 @@ export default function GameUI() {
       ]);
       const pool = shuffle(MASTER_TASK_POOL);
       setTaskPool(pool);
+      setPool1on1(shuffle([...ONE_ON_ONE_SCENARIOS]));
+      setPoolHelp(shuffle([...SUPPORT_SCENARIOS]));
       setHasStarted(true);
       setIsPlaying(true);
       ticksRef.current = 0;
@@ -535,15 +543,19 @@ export default function GameUI() {
     ]);
     const pool = shuffle(MASTER_TASK_POOL);
     setTaskPool(pool);
+    setPool1on1(shuffle([...ONE_ON_ONE_SCENARIOS]));
+    setPoolHelp(shuffle([...SUPPORT_SCENARIOS]));
     
     const firstTask = pool.pop();
     setBacklog([{ ...firstTask, id: "start1", workDone: 0, createdAt: Date.now() }]);
     setIcebox([]);
     setCompletedTasks(0);
     setWrongAssignments(0);
+    setBadAnswers(0);
     setScore(0);
     setTimeLeft(120);
     setLives(3);
+    setLivesLostCount(0);
     setTotalTaskTimeMs(0);
     setIsGameOver(false);
     setIsPlaying(true);
@@ -573,9 +585,13 @@ export default function GameUI() {
     }
     
     if (burnedOutEmployees > 0) {
-      feedback += `🔥 Alerta Humana: ${burnedOutEmployees} persona(s) llegaron a BURNOUT por estrés extremo. Como líder debes revisar esto; tu equipo es lo más importante, mucho más que cualquier lanzamiento o auditoría. \n`;
+      feedback += `🔥 Alerta Humana: ${burnedOutEmployees} persona(s) llegaron a BURNOUT por estrés extremo. Como líder debes revisar esto; tu equipo es lo más importante, mucho más que cualquier lanzamiento o auditoría. \n\n`;
     } else if (completedTasks > 0) {
-      feedback += `🧘 Liderazgo Sano: Nadie llegó a Burnout. Cuidaste la salud mental de tu equipo bajo presión.\n`;
+      feedback += `🧘 Liderazgo Sano: Nadie llegó a Burnout. Cuidaste la salud mental de tu equipo bajo presión.\n\n`;
+    }
+
+    if (badAnswers > 0) {
+      feedback += `🗣️ Comunicación: Orientaste mal al equipo ${badAnswers} veces en dudas o 1:1, elevando su estrés. ¡Mejora tu empatía y asertividad! \n`;
     }
 
     if (feedback === "") {
@@ -599,21 +615,21 @@ export default function GameUI() {
               <ul className="space-y-2 text-sm text-slate-300">
                 <li>• <strong>1. Lanzamiento de App V2</strong></li>
                 <li>• <strong>2. Cierre de Auditoría Financiera</strong></li>
-                <li>• Eventos: Los empleados ahora te pedirán un <strong>1:1 Urgente</strong> por la alta presión de estos objetivos.</li>
+                <li>• Los empleados te pedirán <strong>1:1 Urgente</strong> por la alta presión de estos objetivos.</li>
               </ul>
             </div>
             <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-xl">
               <h3 className="text-lg font-bold text-orange-400 mb-3 flex items-center gap-2"><Archive /> Priorización</h3>
               <ul className="space-y-2 text-sm text-slate-300">
-                <li>• <strong>Caja de "Para Después":</strong> Arrastra aquí las tareas que <strong>no aportan a los 2 objetivos</strong>.</li>
-                <li>• Al final de la ronda verás un gráfico de rendimiento de estrés y delegación.</li>
+                <li>• <strong>Caja de "Para Después":</strong> Envía aquí las tareas que <strong>no aportan a los 2 objetivos</strong>.</li>
+                <li>• <strong>Asignar (Móvil/PC):</strong> Clickea la tarea y luego clickea al empleado para asignarla (o arrástrala).</li>
               </ul>
             </div>
           </div>
 
           <form onSubmit={startGame} className="max-w-md mx-auto space-y-6 bg-slate-800/40 p-6 rounded-2xl border border-slate-700">
             <div className="text-left">
-              <label className="block text-sm font-bold text-slate-400 uppercase mb-2">Nombre del Líder</label>
+              <label className="block text-sm font-bold text-slate-400 uppercase mb-2">Tu Nombre</label>
               <input 
                 type="text" 
                 required
@@ -679,8 +695,8 @@ export default function GameUI() {
         </div>
       </header>
 
-      <div className="bg-indigo-950/40 border-b border-indigo-900/50 px-4 py-1.5 flex justify-center items-center gap-4 shrink-0">
-        <span className="text-[11px] font-black tracking-widest text-indigo-400 uppercase flex items-center gap-1">
+      <div className="bg-indigo-950/40 border-b border-indigo-900/50 px-4 py-1.5 flex justify-center items-center gap-4 shrink-0 overflow-x-auto whitespace-nowrap">
+        <span className="text-[11px] font-black tracking-widest text-indigo-400 uppercase flex items-center gap-1 shrink-0">
           <Target size={12}/> OBJETIVOS DE HOY:
         </span>
         <div className="flex gap-4 text-[12px] font-bold text-slate-300">
@@ -690,9 +706,10 @@ export default function GameUI() {
         </div>
       </div>
 
-      <main className="flex-1 p-2 md:p-4 flex flex-col md:flex-row gap-4 overflow-hidden">
+      <main className="flex-1 p-2 md:p-4 flex flex-col md:flex-row gap-2 md:gap-4 overflow-hidden">
         
-        <div className="flex-1 flex flex-col min-h-0">
+        {/* ZONA DE EMPLEADOS (Arriba en móvil 60%, izquierda en PC) */}
+        <div className="h-[60%] md:h-auto md:flex-1 flex flex-col min-h-0 border-b md:border-b-0 md:border-r border-slate-800 pb-2 md:pb-0 md:pr-4">
           <div className="flex justify-between items-center mb-2 shrink-0">
              <h2 className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1">
                <UserPlus size={14} /> Equipo
@@ -701,7 +718,7 @@ export default function GameUI() {
           </div>
           
           <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar">
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 pb-20 md:pb-0">
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
               {employees.map(emp => (
                 <motion.div 
                   key={emp.id}
@@ -714,7 +731,7 @@ export default function GameUI() {
                     emp.tasksDone >= 15 ? 'bg-slate-900 border-slate-800 opacity-50 grayscale' :
                     emp.isBurnedOut ? 'bg-red-950/40 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse' : 
                     emp.isAskingHelp ? 'bg-amber-950/40 border-amber-500 animate-pulse' :
-                    selectedTaskId && !emp.currentTask ? 'bg-slate-800 border-emerald-500/50 hover:border-emerald-400 shadow-sm' :
+                    selectedTaskId && !emp.currentTask ? 'bg-slate-800 border-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)] scale-[1.02]' :
                     'bg-slate-800/60 border-slate-700/50 hover:bg-slate-700'
                   }`}
                 >
@@ -747,7 +764,7 @@ export default function GameUI() {
                          {emp.id !== "leader" ? (
                             <span className="text-[9px] text-emerald-500 font-bold">{emp.tasksDone}/15 Dones</span>
                          ) : (
-                            <span className="text-[9px] text-indigo-400 font-bold">∞ Infinito</span>
+                            <span className="text-[9px] text-indigo-400 font-bold">∞</span>
                          )}
                       </div>
                     </div>
@@ -763,7 +780,7 @@ export default function GameUI() {
                          <MessageCircle size={10} /> CLIC PARA HABLAR
                        </div>
                     ) : emp.isAskingHelp && emp.id !== "leader" ? (
-                       <div className="bg-amber-500 text-amber-950 rounded py-1 text-center text-[10px] font-bold">¡DUDAS! CLIC PARA GUIAR</div>
+                       <div className="bg-amber-500 text-amber-950 rounded py-1 text-center text-[10px] font-bold">CLIC PARA GUIAR</div>
                     ) : emp.currentTask ? (
                       <div className="bg-slate-900/50 rounded p-1.5 border border-slate-700/50">
                         <div className="flex items-center gap-1 mb-1 text-[10px] font-semibold truncate">
@@ -775,8 +792,8 @@ export default function GameUI() {
                         </div>
                       </div>
                     ) : (
-                      <div className="h-[30px] border border-dashed border-slate-600 rounded flex items-center justify-center text-[10px] text-slate-500">
-                        {emp.id === "leader" ? "Libre para trabajar" : "Libre"}
+                      <div className="h-[28px] border border-dashed border-slate-600 rounded flex items-center justify-center text-[10px] text-slate-500">
+                        {selectedTaskId ? "Click para Asignar" : "Libre"}
                       </div>
                     )}
                     
@@ -787,15 +804,16 @@ export default function GameUI() {
           </div>
         </div>
 
-        <div className="w-full md:w-64 lg:w-72 flex flex-col shrink-0 min-h-0 border-t md:border-t-0 md:border-l border-slate-800 pt-2 md:pt-0 md:pl-4 gap-4">
+        {/* ZONA DE TAREAS (Abajo en móvil 40%, derecha en PC) */}
+        <div className="flex-1 md:h-auto md:w-64 lg:w-72 flex flex-col shrink-0 min-h-0 gap-2">
           
-          <div className="flex-1 flex flex-col overflow-hidden min-h-[200px]">
+          <div className="flex-1 flex flex-col overflow-hidden min-h-0">
             <h2 className="text-xs font-bold text-slate-400 uppercase flex items-center justify-between mb-2 shrink-0">
-              <span className="flex items-center gap-1"><FileText size={14} /> Bandeja</span>
-              <span className={`${backlog.length >= 10 ? 'text-red-400 animate-pulse' : 'text-slate-500'}`}>{backlog.length}/13</span>
+              <span className="flex items-center gap-1"><FileText size={14} /> Bandeja <span className="text-[9px] font-normal normal-case ml-1">(Clickea para asignar)</span></span>
+              <span className={`${backlog.length >= 10 ? 'text-red-400 animate-pulse font-bold' : 'text-slate-500'}`}>{backlog.length}/13</span>
             </h2>
 
-            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 custom-scrollbar pb-4 md:pb-0">
+            <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-1.5 custom-scrollbar">
               <AnimatePresence>
                 {backlog.map(task => (
                   <motion.div
@@ -807,9 +825,9 @@ export default function GameUI() {
                     animate={{ opacity: 1, scale: 1, x: 0 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     onClick={() => handleTaskClick(task.id)}
-                    className={`p-2 rounded-lg cursor-grab active:cursor-grabbing border transition-all ${
+                    className={`p-2 rounded-lg cursor-pointer md:cursor-grab active:cursor-grabbing border transition-all ${
                       task.type === 'lider' ? 'border-amber-500/50 bg-amber-950/20' : 
-                      selectedTaskId === task.id ? 'bg-slate-700 border-amber-400 shadow-sm' : 
+                      selectedTaskId === task.id ? 'bg-emerald-900 border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)] scale-[1.02]' : 
                       'bg-[#1E293B] border-slate-700/50 hover:bg-slate-700'
                     }`}
                   >
@@ -826,18 +844,21 @@ export default function GameUI() {
           </div>
 
           <div 
+            onClick={() => selectedTaskId && handleIceboxDrop({ preventDefault: () => {} } as any)}
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleIceboxDrop}
-            className="h-32 shrink-0 border-2 border-dashed border-slate-600/50 rounded-xl bg-slate-900/50 flex flex-col overflow-hidden transition-colors hover:border-blue-500/50"
+            className={`h-24 md:h-32 shrink-0 border-2 border-dashed rounded-xl flex flex-col overflow-hidden transition-colors cursor-pointer ${
+              selectedTaskId ? 'border-blue-500 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'border-slate-600/50 bg-slate-900/50 hover:border-blue-500/50'
+            }`}
           >
-            <h2 className="text-[10px] font-bold text-slate-500 uppercase flex items-center justify-between p-2 bg-slate-800/80">
+            <h2 className="text-[10px] font-bold text-slate-500 uppercase flex items-center justify-between p-1.5 md:p-2 bg-slate-800/80">
               <span className="flex items-center gap-1"><Archive size={12} /> Para Después</span>
               <span className="bg-slate-700 px-1.5 py-0.5 rounded text-white">{icebox.length}</span>
             </h2>
             <div className="flex-1 flex items-center justify-center p-2 text-center relative">
               {icebox.length === 0 ? (
-                <p className="text-[10px] text-slate-600 font-medium px-4 leading-tight">
-                  Arrastra aquí las tareas que <strong>NO</strong> aportan a los objetivos.
+                <p className="text-[9px] md:text-[10px] text-slate-600 font-medium px-2 leading-tight">
+                  {selectedTaskId ? "¡Clickea aquí para archivar!" : "Arrastra aquí las tareas que NO aportan."}
                 </p>
               ) : (
                 <div className="absolute inset-0 p-2 overflow-y-auto custom-scrollbar flex flex-wrap gap-1 content-start">
@@ -891,10 +912,10 @@ export default function GameUI() {
                 </h3>
               </div>
               <p className="text-slate-300 mb-6 font-medium italic">
-                "{activeModal.questions[activeModal.step].q}"
+                "{activeModal.questions[0].q}"
               </p>
               <div className="space-y-2">
-                {activeModal.questions[activeModal.step].opts.map((opt: any, i: number) => (
+                {activeModal.questions[0].opts.map((opt: any, i: number) => (
                   <button 
                     key={i} 
                     onClick={() => handleModalAnswer(opt.res)}
@@ -904,11 +925,6 @@ export default function GameUI() {
                   </button>
                 ))}
               </div>
-              {activeModal.type === '1:1' && (
-                <div className="mt-4 text-center text-xs text-slate-500">
-                  Pregunta {activeModal.step + 1} de 2
-                </div>
-              )}
             </motion.div>
           </motion.div>
         )}
@@ -916,7 +932,7 @@ export default function GameUI() {
 
       {isGameOver && (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto py-10">
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-[#0F172A] border border-slate-700 p-8 rounded-3xl max-w-xl w-full text-center shadow-2xl">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-[#0F172A] border border-slate-700 p-6 md:p-8 rounded-3xl max-w-2xl w-full text-center shadow-2xl">
             {winStatus ? (
               <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
             ) : (
@@ -925,40 +941,41 @@ export default function GameUI() {
             
             <h2 className="text-3xl font-black text-white mb-2">{winStatus ? '¡Sobreviviste al Día!' : 'Colapso Total'}</h2>
             
-            <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4 text-left text-sm text-slate-300 whitespace-pre-line shadow-inner">
+            <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4 text-left text-sm text-slate-300 whitespace-pre-line shadow-inner max-h-60 overflow-y-auto custom-scrollbar">
               <h4 className="font-bold text-white mb-2 uppercase text-[10px] tracking-wider text-center">Evaluación de Liderazgo Estratégico</h4>
               {getFeedback()}
             </div>
             
-            {/* GRÁFICO DE RENDIMIENTO */}
-            <div className="bg-slate-800/50 rounded-xl p-5 mb-6 text-left border border-slate-700/50">
-               <h4 className="font-bold text-white mb-4 uppercase text-[10px] tracking-wider flex items-center gap-1"><BarChart2 size={12}/> Desempeño y Estrés del Equipo</h4>
-               <div className="space-y-3">
-                 {employees.map(emp => (
-                   <div key={emp.id} className="flex items-center gap-3 text-xs">
-                     <div className="w-24 truncate text-slate-300 font-medium flex items-center gap-1">
-                        <span>{emp.avatar}</span> {emp.id === "leader" ? "Tú" : emp.name}
-                     </div>
-                     <div className="flex-1 flex flex-col gap-1">
-                        {/* Barra Tareas */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-[9px] text-slate-500 w-10 text-right">{emp.tasksAssigned} T.</span>
-                          <div className="h-2 flex-1 bg-slate-900 rounded-full overflow-hidden">
-                            <div className="h-full bg-emerald-500" style={{ width: `${Math.min(100, (emp.tasksAssigned / 15) * 100)}%` }} />
-                          </div>
-                        </div>
-                        {/* Barra Estrés Máximo */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-[9px] text-slate-500 w-10 text-right">{Math.floor(emp.maxStress)}%</span>
-                          <div className="h-2 flex-1 bg-slate-900 rounded-full overflow-hidden">
-                            <div className="h-full bg-red-500" style={{ width: `${emp.maxStress}%` }} />
-                          </div>
-                        </div>
-                     </div>
-                   </div>
-                 ))}
-               </div>
-            </div>
+            {/* RANKING (Leaderboard) */}
+            {leaderboard.length > 0 && (
+              <div className="bg-slate-800/50 rounded-xl p-4 mb-6 text-left border border-slate-700/50 overflow-x-auto">
+                 <h4 className="font-bold text-white mb-3 uppercase text-[10px] tracking-wider flex items-center gap-1"><Trophy size={12} className="text-amber-400"/> Salón de la Fama Corporativo</h4>
+                 <table className="w-full text-xs text-left text-slate-400">
+                    <thead className="text-[9px] uppercase bg-slate-900/50 text-slate-500">
+                       <tr>
+                          <th className="px-2 py-1.5 rounded-l-md">Rank</th>
+                          <th className="px-2 py-1.5">Líder</th>
+                          <th className="px-2 py-1.5">Puntos</th>
+                          <th className="px-2 py-1.5">Burnouts</th>
+                          <th className="px-2 py-1.5">Errores Asign.</th>
+                          <th className="px-2 py-1.5 rounded-r-md">Vidas G.</th>
+                       </tr>
+                    </thead>
+                    <tbody>
+                       {leaderboard.map((entry, i) => (
+                          <tr key={i} className={`border-b border-slate-700/50 last:border-0 ${entry.date === Date.now() ? 'bg-indigo-900/30' : ''}`}>
+                             <td className="px-2 py-2 font-bold">{i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`}</td>
+                             <td className="px-2 py-2 text-white font-medium">{entry.name}</td>
+                             <td className="px-2 py-2 text-amber-400 font-bold">{entry.score}</td>
+                             <td className="px-2 py-2">{entry.burnouts}</td>
+                             <td className="px-2 py-2">{entry.wrongAssignments}</td>
+                             <td className="px-2 py-2 text-red-400">{entry.livesLost}</td>
+                          </tr>
+                       ))}
+                    </tbody>
+                 </table>
+              </div>
+            )}
 
             <div className="grid grid-cols-3 gap-2 text-left mb-6 bg-slate-900/30 p-4 rounded-xl">
               <div>
@@ -975,7 +992,7 @@ export default function GameUI() {
               </div>
             </div>
 
-            <button onClick={restartGame} className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 px-6 py-4 rounded-xl font-black text-lg transition-all active:scale-95">
+            <button onClick={restartGame} className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 px-6 py-4 rounded-xl font-black text-lg transition-all active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
               JUGAR DE NUEVO
             </button>
           </motion.div>
