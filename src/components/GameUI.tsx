@@ -215,6 +215,7 @@ export default function GameUI() {
   const [rulesAccepted, setRulesAccepted] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const [winStatus, setWinStatus] = useState(false);
   
@@ -579,7 +580,7 @@ export default function GameUI() {
       setPool1on1(shuffle([...ONE_ON_ONE_SCENARIOS]));
       setPoolHelp(shuffle([...SUPPORT_SCENARIOS]));
       setHasStarted(true);
-      setIsPlaying(true);
+      setTutorialStep(1);
       ticksRef.current = 0;
       
       const firstTask = pool.pop();
@@ -681,8 +682,8 @@ export default function GameUI() {
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl w-full text-center space-y-6 mt-24 mb-8">
-          <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">
-            Un Día Tuyo
+          <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2 flex items-center justify-center gap-3">
+            Un Día <span className="text-5xl">🔥</span>
           </h1>
           <p className="text-xl text-slate-200 font-semibold max-w-2xl mx-auto leading-relaxed mt-4">
             ¿Estás listo para vivir los 2 minutos más intensos de tu día? Debes gestionar todo el trabajo sin llevar a tu equipo al burnout.
@@ -690,18 +691,19 @@ export default function GameUI() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-8 mt-6">
             <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-xl">
-              <h3 className="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2"><Target /> Objetivos de Hoy</h3>
+              <h3 className="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2"><Target /> Tus Grandes Metas</h3>
               <ul className="space-y-2 text-sm text-slate-300">
-                <li>• <strong>1. Lanzamiento de App V2</strong></li>
-                <li>• <strong>2. Cierre de Auditoría Financiera</strong></li>
-                <li>• Los empleados te pedirán <strong>1:1 Urgente</strong> por la alta presión de estos objetivos.</li>
+                <li>• 🚀 <strong>Lanzamiento Épico de App V2:</strong> ¡El mercado nos espera!</li>
+                <li>• 💼 <strong>Cierre de Auditoría Financiera:</strong> La supervivencia de la empresa está en juego.</li>
+                <li>• ⚠️ <strong>¡Cuidado!</strong> La presión es enorme y tu equipo colapsará si no delegas bien.</li>
               </ul>
             </div>
             <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-xl">
-              <h3 className="text-lg font-bold text-orange-400 mb-3 flex items-center gap-2"><Archive /> Priorización</h3>
+              <h3 className="text-lg font-bold text-orange-400 mb-3 flex items-center gap-2"><FileText /> Instrucciones de Juego</h3>
               <ul className="space-y-2 text-sm text-slate-300">
-                <li>• <strong>Caja de "Para Después":</strong> Envía aquí las tareas que <strong>no aportan a los 2 objetivos</strong>.</li>
-                <li>• <strong>Asignar (Móvil/PC):</strong> Clickea la tarea y luego clickea al empleado para asignarla (o arrástrala).</li>
+                <li>• <strong>Asignar Tareas:</strong> Clickea la tarea en la bandeja y luego clickea al empleado para asignarla.</li>
+                <li>• <strong>Caja "Para Después":</strong> Envía ahí todo el trabajo basura que <strong>no aporta</strong> a tus dos grandes metas.</li>
+                <li>• <strong>Vigila el Estrés:</strong> Si asignas tareas al perfil incorrecto, el estrés subirá el doble y perderás productividad.</li>
               </ul>
             </div>
           </div>
@@ -753,7 +755,7 @@ export default function GameUI() {
     <div className="h-screen max-h-screen bg-[#090D16] text-slate-200 flex flex-col font-sans overflow-hidden">
       
       <header className="px-4 py-2 bg-[#0F172A] border-b border-slate-800 flex justify-between items-center shrink-0">
-        <div className="flex items-center gap-4">
+        <div className={`flex items-center gap-4 ${tutorialStep === 1 ? 'relative z-[101] ring-4 ring-red-500 p-2 bg-slate-900 rounded-xl' : ''}`}>
           <div className="flex gap-1 text-red-500">
             {[...Array(3)].map((_, i) => (
               <Heart key={i} size={18} fill={i < lives ? "currentColor" : "none"} className={i >= lives ? "text-slate-700" : ""} />
@@ -788,7 +790,7 @@ export default function GameUI() {
       <main className="flex-1 p-2 md:p-4 flex flex-col md:flex-row gap-2 md:gap-4 overflow-hidden">
         
         {/* ZONA DE EMPLEADOS (Arriba en móvil 60%, izquierda en PC) */}
-        <div className="h-[60%] md:h-auto md:flex-1 flex flex-col min-h-0 border-b md:border-b-0 md:border-r border-slate-800 pb-2 md:pb-0 md:pr-4">
+        <div className={`h-[65%] md:h-auto md:flex-1 flex flex-col min-h-0 border-b md:border-b-0 md:border-r border-slate-800 pb-2 md:pb-0 md:pr-4 ${tutorialStep === 2 ? 'relative z-[101] ring-4 ring-emerald-500 p-2 bg-[#090D16] rounded-xl' : ''}`}>
           <div className="flex justify-between items-center mb-2 shrink-0">
              <h2 className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1">
                <UserPlus size={14} /> Equipo
@@ -804,7 +806,7 @@ export default function GameUI() {
                   onClick={() => handleEmployeeClick(emp.id)}
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={(e) => handleDrop(e, emp.id)}
-                  className={`relative p-2 md:p-3 rounded-xl border flex flex-col gap-2 transition-all cursor-pointer ${
+                  className={`relative p-1.5 md:p-2 rounded-xl border flex flex-col gap-1 transition-all cursor-pointer ${
                     emp.id === "leader" ? 'bg-indigo-900/40 border-indigo-500/50 hover:bg-indigo-900/60' :
                     emp.isMedical ? 'bg-slate-800 border-slate-700 opacity-60' :
                     emp.tasksDone >= 15 ? 'bg-slate-900 border-slate-800 opacity-50 grayscale' :
@@ -815,21 +817,21 @@ export default function GameUI() {
                   }`}
                 >
                   <div className="absolute -top-2 -right-2">
-                     {emp.id === "leader" && <span className="bg-amber-500 text-[10px] px-1.5 py-0.5 rounded text-slate-900 font-bold">LÍDER</span>}
-                     {emp.isMedical && <span className="bg-slate-600 text-[10px] px-1.5 py-0.5 rounded text-white font-bold flex items-center gap-1"><Stethoscope size={10}/>CITA (10s)</span>}
-                     {emp.tasksDone >= 15 && emp.id !== "leader" && !emp.isMedical && <span className="bg-slate-700 text-[10px] px-1.5 py-0.5 rounded text-white font-bold">Turno Fin</span>}
-                     {emp.isBurnedOut && !emp.isMedical && <span className="bg-red-500 text-[10px] px-1.5 py-0.5 rounded text-white font-bold flex items-center gap-1"><Flame size={10}/> ¡1:1 URGENTE!</span>}
-                     {emp.isAskingHelp && !emp.isMedical && !emp.isBurnedOut && <span className="bg-amber-500 text-[10px] px-1.5 py-0.5 rounded text-slate-900 font-bold flex items-center gap-1"><HelpCircle size={10}/> ¡PREGUNTA!</span>}
+                     {emp.id === "leader" && <span className="bg-amber-500 text-[9px] px-1 py-0.5 rounded text-slate-900 font-bold">LÍDER</span>}
+                     {emp.isMedical && <span className="bg-slate-600 text-[9px] px-1 py-0.5 rounded text-white font-bold flex items-center gap-1"><Stethoscope size={8}/>CITA</span>}
+                     {emp.tasksDone >= 15 && emp.id !== "leader" && !emp.isMedical && <span className="bg-slate-700 text-[9px] px-1 py-0.5 rounded text-white font-bold">FIN</span>}
+                     {emp.isBurnedOut && !emp.isMedical && <span className="bg-red-500 text-[9px] px-1 py-0.5 rounded text-white font-bold flex items-center gap-1"><Flame size={8}/> 1:1 URGENTE</span>}
+                     {emp.isAskingHelp && !emp.isMedical && !emp.isBurnedOut && <span className="bg-amber-500 text-[9px] px-1 py-0.5 rounded text-slate-900 font-bold flex items-center gap-1"><HelpCircle size={8}/> PREGUNTA</span>}
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <div className="text-2xl md:text-3xl">{emp.avatar}</div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="text-xl md:text-2xl">{emp.avatar}</div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1">
-                        <h3 className={`font-bold text-xs md:text-sm truncate ${emp.id === "leader" ? "text-amber-400" : emp.isMedical ? "text-slate-400 line-through" : "text-white"}`}>{emp.name}</h3>
+                        <h3 className={`font-bold text-[10px] md:text-xs truncate ${emp.id === "leader" ? "text-amber-400" : emp.isMedical ? "text-slate-400 line-through" : "text-white"}`}>{emp.name}</h3>
                         {emp.id !== "leader" && !emp.isMedical && <span title="Afín a esta tarea" className="opacity-50">{getTaskIcon(emp.bestTask as TaskType)}</span>}
                       </div>
-                      <p className="text-[10px] text-slate-400 truncate">{emp.role}</p>
+                      <p className="text-[9px] text-slate-400 truncate">{emp.role}</p>
                     </div>
                   </div>
 
@@ -838,12 +840,12 @@ export default function GameUI() {
                       <div className="h-1 w-full bg-slate-900 rounded-full overflow-hidden">
                         <div className={`h-full ${emp.stress > 80 ? 'bg-red-500' : emp.stress > 50 ? 'bg-orange-400' : 'bg-emerald-500'}`} style={{ width: `${emp.stress}%` }} />
                       </div>
-                      <div className="flex justify-between mt-1">
-                         <span className="text-[9px] text-slate-500">{Math.floor(emp.stress)}% Estrés</span>
+                      <div className="flex justify-between mt-0.5">
+                         <span className="text-[8px] text-slate-500">{Math.floor(emp.stress)}% Estrés</span>
                          {emp.id !== "leader" ? (
-                            <span className="text-[9px] text-emerald-500 font-bold">{emp.tasksDone}/15 Dones</span>
+                            <span className="text-[8px] text-emerald-500 font-bold">{emp.tasksDone}/15</span>
                          ) : (
-                            <span className="text-[9px] text-indigo-400 font-bold">∞</span>
+                            <span className="text-[8px] text-indigo-400 font-bold">∞</span>
                          )}
                       </div>
                     </div>
@@ -851,18 +853,18 @@ export default function GameUI() {
 
                   <div className="mt-auto flex flex-col gap-1">
                     {emp.isMedical ? (
-                      <div className="bg-slate-900/80 rounded py-1 text-center text-[10px] text-slate-500 font-bold">EN EL DOCTOR</div>
+                      <div className="bg-slate-900/80 rounded py-0.5 text-center text-[9px] text-slate-500 font-bold">EN EL DOCTOR</div>
                     ) : emp.tasksDone >= 15 && emp.id !== "leader" ? (
-                      <div className="bg-slate-900/80 rounded py-1 text-center text-[10px] text-slate-500 font-bold">FUERA DE OFICINA</div>
+                      <div className="bg-slate-900/80 rounded py-0.5 text-center text-[9px] text-slate-500 font-bold">FUERA DE OFICINA</div>
                     ) : emp.isBurnedOut ? (
-                       <div className="bg-red-500/20 text-red-400 border border-red-500/50 rounded py-1 text-center text-[10px] font-bold flex items-center justify-center gap-1">
-                         <MessageCircle size={10} /> CLIC PARA HABLAR
+                       <div className="bg-red-500/20 text-red-400 border border-red-500/50 rounded py-0.5 text-center text-[9px] font-bold flex items-center justify-center gap-1">
+                         <MessageCircle size={8} /> HABLAR
                        </div>
                     ) : emp.isAskingHelp && emp.id !== "leader" ? (
-                       <div className="bg-amber-500 text-amber-950 rounded py-1 text-center text-[10px] font-bold">CLIC PARA GUIAR</div>
+                       <div className="bg-amber-500 text-amber-950 rounded py-0.5 text-center text-[9px] font-bold">GUIAR</div>
                     ) : emp.currentTask ? (
-                      <div className="bg-slate-900/50 rounded p-1.5 border border-slate-700/50">
-                        <div className="flex items-center gap-1 mb-1 text-[10px] font-semibold truncate">
+                      <div className="bg-slate-900/50 rounded p-1 border border-slate-700/50">
+                        <div className="flex items-center gap-1 mb-1 text-[9px] font-semibold truncate">
                           {getTaskIcon(emp.currentTask.type)}
                           <span className="truncate">{emp.currentTask.name}</span>
                         </div>
@@ -871,24 +873,62 @@ export default function GameUI() {
                         </div>
                       </div>
                     ) : (
-                      <div className="h-[28px] border border-dashed border-slate-600 rounded flex items-center justify-center text-[10px] text-slate-500">
-                        {selectedTaskId ? "Click para Asignar" : "Libre"}
+                      <div className="h-[20px] border border-dashed border-slate-600 rounded flex items-center justify-center text-[9px] text-slate-500">
+                        {selectedTaskId ? "Asignar" : "Libre"}
                       </div>
                     )}
-                    
                   </div>
                 </motion.div>
               ))}
             </div>
           </div>
+
+          <div 
+            onClick={() => {
+              if (selectedTaskId) {
+                 const task = backlog.find(t => t.id === selectedTaskId);
+                 if (task) {
+                   setIcebox(prev => [...prev, task]);
+                   setBacklog(prev => prev.filter(t => t.id !== selectedTaskId));
+                   setSelectedTaskId(null);
+                 }
+              }
+            }}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleIceboxDrop}
+            className={`mt-2 h-16 md:h-20 shrink-0 border-2 border-dashed rounded-xl flex flex-col overflow-hidden transition-colors cursor-pointer ${
+              selectedTaskId ? 'border-blue-500 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'border-slate-600/50 bg-slate-900/50 hover:border-blue-500/50'
+            } ${tutorialStep === 4 ? 'relative z-[101] ring-4 ring-orange-400 bg-slate-900' : ''}`}
+          >
+            <h2 className="text-[10px] font-bold text-slate-500 uppercase flex items-center justify-between p-1 md:p-1.5 bg-slate-800/80">
+              <span className="flex items-center gap-1"><Archive size={12} /> Para Después</span>
+              <span className="bg-slate-700 px-1.5 py-0.5 rounded text-white">{icebox.length}</span>
+            </h2>
+            <div className="flex-1 flex items-center justify-center p-1 text-center relative">
+              {icebox.length === 0 ? (
+                <p className="text-[9px] text-slate-600 font-medium px-2 leading-tight">
+                  {selectedTaskId ? "¡Clickea aquí para archivar!" : "Arrastra aquí tareas inútiles."}
+                </p>
+              ) : (
+                <div className="absolute inset-0 p-1 overflow-y-auto custom-scrollbar flex flex-wrap gap-1 content-start">
+                  {icebox.map(task => (
+                    <div key={task.id} className="bg-slate-800 rounded p-1" title={task.name}>
+                      {getTaskIcon(task.type)}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
 
         {/* ZONA DE TAREAS (Abajo en móvil 40%, derecha en PC) */}
-        <div className="flex-1 md:h-auto md:w-64 lg:w-72 flex flex-col shrink-0 min-h-0 gap-2">
+        <div className={`flex-1 md:h-auto md:w-64 lg:w-72 flex flex-col shrink-0 min-h-0 gap-2 bg-slate-900/90 border border-indigo-500/30 rounded-xl p-2 ${tutorialStep === 3 ? 'relative z-[101] ring-4 ring-blue-400 bg-slate-800' : ''}`}>
           
           <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-            <h2 className="text-xs font-bold text-slate-400 uppercase flex items-center justify-between mb-2 shrink-0">
-              <span className="flex items-center gap-1"><FileText size={14} /> Bandeja <span className="text-[9px] font-normal normal-case ml-1">(Clickea para asignar)</span></span>
+            <h2 className="text-xs font-bold text-indigo-400 uppercase flex items-center justify-between mb-2 shrink-0">
+              <span className="flex items-center gap-1"><FileText size={14} /> Bandeja <span className="text-[9px] font-normal normal-case ml-1 text-slate-400">(Clickea para asignar)</span></span>
               <span className={`${backlog.length >= 10 ? 'text-red-400 animate-pulse font-bold' : 'text-slate-500'}`}>{backlog.length}/13</span>
             </h2>
 
@@ -907,7 +947,7 @@ export default function GameUI() {
                     className={`p-2 rounded-lg cursor-pointer md:cursor-grab active:cursor-grabbing border transition-all ${
                       task.type === 'lider' ? 'border-amber-500/50 bg-amber-950/20' : 
                       selectedTaskId === task.id ? 'bg-emerald-900 border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)] scale-[1.02]' : 
-                      'bg-[#1E293B] border-slate-700/50 hover:bg-slate-700'
+                      'bg-[#1E293B] border-indigo-700/30 hover:bg-slate-800 hover:border-indigo-500/50'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -919,44 +959,6 @@ export default function GameUI() {
                   </motion.div>
                 ))}
               </AnimatePresence>
-            </div>
-          </div>
-
-          <div 
-            onClick={() => {
-              if (selectedTaskId) {
-                 const task = backlog.find(t => t.id === selectedTaskId);
-                 if (task) {
-                   setIcebox(prev => [...prev, task]);
-                   setBacklog(prev => prev.filter(t => t.id !== selectedTaskId));
-                   setSelectedTaskId(null);
-                 }
-              }
-            }}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleIceboxDrop}
-            className={`h-24 md:h-32 shrink-0 border-2 border-dashed rounded-xl flex flex-col overflow-hidden transition-colors cursor-pointer ${
-              selectedTaskId ? 'border-blue-500 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'border-slate-600/50 bg-slate-900/50 hover:border-blue-500/50'
-            }`}
-          >
-            <h2 className="text-[10px] font-bold text-slate-500 uppercase flex items-center justify-between p-1.5 md:p-2 bg-slate-800/80">
-              <span className="flex items-center gap-1"><Archive size={12} /> Para Después</span>
-              <span className="bg-slate-700 px-1.5 py-0.5 rounded text-white">{icebox.length}</span>
-            </h2>
-            <div className="flex-1 flex items-center justify-center p-2 text-center relative">
-              {icebox.length === 0 ? (
-                <p className="text-[9px] md:text-[10px] text-slate-600 font-medium px-2 leading-tight">
-                  {selectedTaskId ? "¡Clickea aquí para archivar!" : "Arrastra aquí las tareas que NO aportan."}
-                </p>
-              ) : (
-                <div className="absolute inset-0 p-2 overflow-y-auto custom-scrollbar flex flex-wrap gap-1 content-start">
-                  {icebox.map(task => (
-                    <div key={task.id} className="bg-slate-800 rounded p-1" title={task.name}>
-                      {getTaskIcon(task.type)}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
           
@@ -1057,6 +1059,55 @@ export default function GameUI() {
           </motion.div>
         </div>
       )}
+      <AnimatePresence>
+        {tutorialStep > 0 && tutorialStep <= 4 && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4 backdrop-blur-sm"
+          >
+             <div className="bg-[#0F172A] p-6 rounded-2xl border border-indigo-500 shadow-2xl max-w-sm text-center relative z-[102]">
+                {tutorialStep === 1 && (
+                  <>
+                     <h3 className="text-2xl font-black text-red-500 mb-3 flex items-center justify-center gap-2"><Heart size={28}/> Vidas</h3>
+                     <p className="text-slate-300 font-medium leading-relaxed">Aquí encontrarás tus vidas. Si la <strong>Bandeja de Tareas</strong> se llena (13 tareas), colapsarás y perderás una vida.</p>
+                  </>
+                )}
+                {tutorialStep === 2 && (
+                  <>
+                     <h3 className="text-2xl font-black text-emerald-400 mb-3 flex items-center justify-center gap-2"><UserPlus size={28}/> Tu Equipo</h3>
+                     <p className="text-slate-300 font-medium leading-relaxed">Cada persona tiene una <strong>especialidad</strong> y un límite de estrés. ¡Dales la tarea correcta o se quemarán el doble de rápido!</p>
+                  </>
+                )}
+                {tutorialStep === 3 && (
+                  <>
+                     <h3 className="text-2xl font-black text-blue-400 mb-3 flex items-center justify-center gap-2"><FileText size={28}/> La Bandeja</h3>
+                     <p className="text-slate-300 font-medium leading-relaxed">Aquí es donde llegan los problemas sin parar. Haz clic en la tarea y luego haz clic en el empleado que pueda resolverla.</p>
+                  </>
+                )}
+                {tutorialStep === 4 && (
+                  <>
+                     <h3 className="text-2xl font-black text-orange-400 mb-3 flex items-center justify-center gap-2"><Archive size={28}/> Para Después</h3>
+                     <p className="text-slate-300 font-medium leading-relaxed">Si una tarea NO aporta al lanzamiento de la App ni a la Auditoría, ¡envíala aquí inmediatamente!</p>
+                  </>
+                )}
+                <button 
+                  onClick={() => {
+                    if (tutorialStep === 4) {
+                      setTutorialStep(5);
+                      setIsPlaying(true);
+                    } else {
+                      setTutorialStep(s => s + 1);
+                    }
+                  }}
+                  className="mt-8 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 rounded-xl transition-all active:scale-95 text-lg"
+                >
+                  {tutorialStep === 4 ? "¡ARRANCAR!" : "Entendido"}
+                </button>
+             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
