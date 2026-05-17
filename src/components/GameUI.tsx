@@ -324,7 +324,6 @@ export default function GameUI() {
         if (newLives <= 0) {
           setIsGameOver(true);
           setWinStatus(false);
-          saveToLeaderboard();
           return;
         } else {
           setLifeLostModal(newLives);
