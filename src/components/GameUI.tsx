@@ -47,12 +47,11 @@ interface LeaderboardEntry {
 
 // --- CONFIGURACIÓN DEL NIVEL ---
 const INITIAL_EMPLOYEES: Employee[] = [
-  { id: "e1", name: "Sofía", role: "Experiencia 1", avatar: "👩‍💼", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'compleja' },
-  { id: "e2", name: "Martín", role: "Experiencia 2", avatar: "👨‍💼", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'compleja' },
-  { id: "e3", name: "Mateo", role: "Novato 1", avatar: "👦", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'rutinaria' },
-  { id: "e4", name: "Valeria", role: "Novata 2", avatar: "👧", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'rutinaria' },
+  { id: "e1", name: "Sofía", role: "Experiencia", avatar: "👩‍💼", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'compleja' },
+  { id: "e3", name: "Mateo", role: "Apaga-incendios", avatar: "👨‍🚒", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'urgente' },
+  { id: "e4", name: "Valeria", role: "Novata", avatar: "👧", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'rutinaria' },
   { id: "e5", name: "Ana", role: "Asistente", avatar: "👩‍🔧", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'rutinaria' },
-  { id: "e6", name: "Elena", role: "Apaga-incendios", avatar: "👩‍🚒", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'urgente' }
+  { id: "e6", name: "Elena", role: "Especialista", avatar: "👩‍💻", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'compleja' }
 ];
 
 const MASTER_TASK_POOL = [
@@ -167,6 +166,7 @@ export default function GameUI() {
   const [completedTasks, setCompletedTasks] = useState(0);
   const [wrongAssignments, setWrongAssignments] = useState(0); 
   const [badAnswers, setBadAnswers] = useState(0);
+  const [leaderRutinarias, setLeaderRutinarias] = useState(0);
 
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   
@@ -413,6 +413,9 @@ export default function GameUI() {
     if (emp.id !== "leader" && taskToAssign.type !== emp.bestTask) {
       setWrongAssignments(prev => prev + 1);
     }
+    if (emp.id === "leader" && taskToAssign.type === "rutinaria") {
+      setLeaderRutinarias(prev => prev + 1);
+    }
 
     setEmployees(prev => prev.map(e => e.id === empId ? { ...e, currentTask: taskToAssign, tasksAssigned: e.tasksAssigned + 1 } : e));
     setBacklog(prev => prev.filter(t => t.id !== taskId));
@@ -552,6 +555,7 @@ export default function GameUI() {
     setCompletedTasks(0);
     setWrongAssignments(0);
     setBadAnswers(0);
+    setLeaderRutinarias(0);
     setScore(0);
     setTimeLeft(120);
     setLives(3);
@@ -591,7 +595,11 @@ export default function GameUI() {
     }
 
     if (badAnswers > 0) {
-      feedback += `🗣️ Comunicación: Orientaste mal al equipo ${badAnswers} veces en dudas o 1:1, elevando su estrés. ¡Mejora tu empatía y asertividad! \n`;
+      feedback += `🗣️ Comunicación: Orientaste mal al equipo ${badAnswers} veces en dudas o 1:1, elevando su estrés. ¡Mejora tu empatía y asertividad! \n\n`;
+    }
+
+    if (leaderRutinarias > 0) {
+      feedback += `⚠️ Micromanagement: Tomaste ${leaderRutinarias} tarea(s) operativas (rutinarias). Como líder debes enfocarte en lo táctico y estratégico; delegar es clave para no volverte un cuello de botella.\n\n`;
     }
 
     if (feedback === "") {
