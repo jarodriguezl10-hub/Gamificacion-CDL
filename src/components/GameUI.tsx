@@ -241,6 +241,7 @@ export default function GameUI() {
   const [taskPool, setTaskPool] = useState<any[]>([]);
 
   const [completedTasks, setCompletedTasks] = useState(0);
+  const [generatedTasks, setGeneratedTasks] = useState(1);
   const [wrongAssignments, setWrongAssignments] = useState(0); 
   const [badAnswers, setBadAnswers] = useState(0);
   const [leaderRutinarias, setLeaderRutinarias] = useState(0);
@@ -256,10 +257,10 @@ export default function GameUI() {
   
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
-  const stateRef = useRef({ employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments });
+  const stateRef = useRef({ employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments, generatedTasks });
   useEffect(() => {
-    stateRef.current = { employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments };
-  }, [employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments]);
+    stateRef.current = { employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments, generatedTasks };
+  }, [employees, backlog, icebox, lives, timeLeft, totalTaskTimeMs, taskPool, wrongAssignments, generatedTasks]);
 
   const ticksRef = useRef(0);
 
@@ -307,13 +308,14 @@ export default function GameUI() {
       ticksRef.current += 1;
       const currentTicks = ticksRef.current;
       
-      const { employees: currentEmps, backlog: currentBacklog, lives: currentLives, taskPool: currentPool } = stateRef.current;
+      const { employees: currentEmps, backlog: currentBacklog, lives: currentLives, taskPool: currentPool, generatedTasks: currentGenerated } = stateRef.current;
       let newBacklog = [...currentBacklog];
       let newPool = [...currentPool];
       let newCompleted = 0;
       let newScore = 0;
       let newLives = currentLives;
       let addedGlobalTime = 0;
+      let newGenerated = currentGenerated;
 
       // Evento Especial: Cita médica al minuto 1 (Tick 600, quedan 60s)
       if (currentTicks === 600) {
@@ -334,6 +336,7 @@ export default function GameUI() {
         if (newPool.length > 0) {
           const nextTaskBase = newPool.pop();
           newBacklog.push({ ...nextTaskBase, id: Math.random().toString(36).substr(2, 9) + Date.now(), workDone: 0, createdAt: Date.now() } as Task);
+          newGenerated += 1;
         }
       };
 
@@ -443,6 +446,7 @@ export default function GameUI() {
       setEmployees(newEmployees);
       setBacklog(newBacklog);
       setTaskPool(newPool);
+      if (newGenerated > currentGenerated) setGeneratedTasks(newGenerated);
       
       if (addedGlobalTime > 0) setTotalTaskTimeMs(prev => prev + addedGlobalTime);
       if (newCompleted > 0) {
@@ -630,6 +634,7 @@ export default function GameUI() {
     setBacklog([{ ...firstTask, id: "start1", workDone: 0, createdAt: Date.now() }]);
     setIcebox([]);
     setCompletedTasks(0);
+    setGeneratedTasks(1);
     setWrongAssignments(0);
     setBadAnswers(0);
     setLeaderRutinarias(0);
@@ -653,35 +658,43 @@ export default function GameUI() {
     
     let feedback = "";
     
+    // 1. Priorización (Icebox)
     if (wrongDelayed > 0) {
       feedback += `🚩 Peligro: Enviaste ${wrongDelayed} tareas CRÍTICAS a "Para Después". ¡El lanzamiento y la auditoría sufrieron por esto! \n\n`;
-    }
-    if (rightDelayed > 0) {
+    } else if (rightDelayed > 0) {
       feedback += `✅ Excelente: Pospusiste ${rightDelayed} tareas de baja prioridad correctamente, manteniendo el foco. \n\n`;
+    } else {
+      feedback += `⚖️ Priorización: No archivaste suficientes tareas triviales. ¡Aprende a decir "no" a lo irrelevante para ganar tiempo!\n\n`;
     }
-    if (wrongAssignments > 3) {
+
+    // 2. Delegación
+    if (wrongAssignments > 2) {
       feedback += `⚠️ Asignación: Le diste tareas al perfil equivocado ${wrongAssignments} veces. Conoce mejor a tu equipo. \n\n`;
-    } else if (wrongAssignments === 0 && completedTasks > 0) {
-      feedback += `🏆 Maestro delegando: Asignaste cada tarea exactamente a la persona correcta sin fallar. \n\n`;
+    } else {
+      feedback += `🏆 Maestro delegando: Asignaste cada tarea exactamente a la persona correcta casi sin fallar. \n\n`;
     }
     
+    // 3. Salud Mental
     if (burnedOutEmployees > 0) {
-      feedback += `🔥 Alerta Humana: ${burnedOutEmployees} persona(s) llegaron a BURNOUT por estrés extremo. Como líder debes revisar esto; tu equipo es lo más importante, mucho más que cualquier lanzamiento o auditoría. \n\n`;
-    } else if (completedTasks > 0) {
+      feedback += `🔥 Alerta Humana: ${burnedOutEmployees} persona(s) llegaron a BURNOUT por estrés extremo. Como líder debes revisar esto; tu equipo es lo más importante. \n\n`;
+    } else {
       feedback += `🧘 Liderazgo Sano: Nadie llegó a Burnout. Cuidaste la salud mental de tu equipo bajo presión.\n\n`;
     }
 
+    // 4. Comunicación
     if (badAnswers > 0) {
       feedback += `🗣️ Comunicación: Orientaste mal al equipo ${badAnswers} veces en dudas o 1:1, elevando su estrés. ¡Mejora tu empatía y asertividad! \n\n`;
+    } else {
+      feedback += `✅ Comunicación Asertiva: Fuiste una guía excelente en todos los 1:1 y dudas técnicas. Dabas claridad en medio del caos. \n\n`;
     }
 
+    // 5. Micromanagement
     if (leaderRutinarias > 0) {
-      feedback += `⚠️ Micromanagement: Tomaste ${leaderRutinarias} tarea(s) operativas (rutinarias). Como líder debes enfocarte en lo táctico y estratégico; delegar es clave para no volverte un cuello de botella.\n\n`;
+      feedback += `⚠️ Micromanagement: Tomaste ${leaderRutinarias} tarea(s) operativas (rutinarias). Como líder debes enfocarte en lo táctico y estratégico, delegar es clave.\n\n`;
+    } else {
+      feedback += `🎯 Líder Estratégico: Te mantuviste alejado del trabajo operativo y te enfocaste en la visión general de los 2 objetivos grandes.\n\n`;
     }
 
-    if (feedback === "") {
-      feedback = "Buen trabajo manteniendo el barco a flote. Sigue puliendo tu velocidad y priorización.";
-    }
     return feedback;
   };
 
@@ -1065,7 +1078,7 @@ export default function GameUI() {
             <div className="grid grid-cols-3 gap-2 text-left mb-6 bg-slate-900/30 p-4 rounded-xl">
               <div>
                 <p className="text-[10px] text-slate-500 uppercase font-bold mb-1"><CheckCircle size={10} className="inline mr-1"/> Tareas</p>
-                <p className="text-lg text-emerald-400 font-medium">{completedTasks}</p>
+                <p className="text-lg text-emerald-400 font-medium">{completedTasks} <span className="text-xs text-slate-500">/ {generatedTasks}</span></p>
               </div>
               <div>
                 <p className="text-[10px] text-slate-500 uppercase font-bold mb-1"><Star size={10} className="inline mr-1"/> Puntos</p>
