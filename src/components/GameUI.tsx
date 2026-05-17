@@ -555,9 +555,9 @@ export default function GameUI() {
   };
 
   const handleIceboxDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    let taskId = e.dataTransfer.getData("taskId");
-    if (!taskId && selectedTaskId) taskId = selectedTaskId; // Para dar click y enviar al icebox si se hizo click primero
+    if (e && e.preventDefault) e.preventDefault();
+    let taskId = e?.dataTransfer ? e.dataTransfer.getData("taskId") : null;
+    if (!taskId && selectedTaskId) taskId = selectedTaskId; 
     
     const task = backlog.find(t => t.id === taskId);
     if (task) {
@@ -701,7 +701,15 @@ export default function GameUI() {
   if (!hasStarted) {
     return (
       <div className="min-h-screen bg-[#090D16] text-slate-200 flex flex-col items-center justify-center p-6 font-sans overflow-y-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl w-full text-center space-y-6 my-8">
+        
+        {/* BANNER FIJO SUPERIOR */}
+        <div className="fixed top-0 left-0 w-full bg-gradient-to-r from-[#111f38] to-[#1a365d] p-5 flex justify-center z-50 shadow-lg border-b border-[#2a4365]">
+           <h1 className="text-3xl font-black text-white tracking-tight">
+             Club de Liderazgo<span className="text-[#68D391]">.AI</span>
+           </h1>
+        </div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl w-full text-center space-y-6 mt-24 mb-8">
           <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">
             Simulador: Un Día Tuyo
           </h1>
@@ -942,7 +950,16 @@ export default function GameUI() {
           </div>
 
           <div 
-            onClick={() => selectedTaskId && handleIceboxDrop({ preventDefault: () => {} } as any)}
+            onClick={() => {
+              if (selectedTaskId) {
+                 const task = backlog.find(t => t.id === selectedTaskId);
+                 if (task) {
+                   setIcebox(prev => [...prev, task]);
+                   setBacklog(prev => prev.filter(t => t.id !== selectedTaskId));
+                   setSelectedTaskId(null);
+                 }
+              }
+            }}
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleIceboxDrop}
             className={`h-24 md:h-32 shrink-0 border-2 border-dashed rounded-xl flex flex-col overflow-hidden transition-colors cursor-pointer ${
