@@ -683,10 +683,10 @@ export default function GameUI() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl w-full text-center space-y-6 mt-24 mb-8">
           <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2 flex items-center justify-center gap-3">
-            Un Día <span className="text-5xl">🔥</span>
+            Un Día <Flame className="w-12 h-12 text-red-500 fill-yellow-400 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
           </h1>
-          <p className="text-xl text-slate-200 font-semibold max-w-2xl mx-auto leading-relaxed mt-4">
-            ¿Estás listo para vivir los 2 minutos más intensos de tu día? Debes gestionar todo el trabajo sin llevar a tu equipo al burnout.
+          <p className="text-lg text-amber-400 font-bold max-w-2xl mx-auto leading-relaxed mt-4 bg-amber-900/20 p-4 rounded-xl border border-amber-500/30">
+            Serás exitoso si: Gestionas TODO el Backlog correctamente en el tiempo asignado sin llevar a tu equipo al burnout.
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-8 mt-6">
@@ -790,7 +790,7 @@ export default function GameUI() {
       <main className="flex-1 p-2 md:p-4 flex flex-col md:flex-row gap-2 md:gap-4 overflow-hidden">
         
         {/* ZONA DE EMPLEADOS (Arriba en móvil 60%, izquierda en PC) */}
-        <div className={`h-[65%] md:h-auto md:flex-1 flex flex-col min-h-0 border-b md:border-b-0 md:border-r border-slate-800 pb-2 md:pb-0 md:pr-4 ${tutorialStep === 2 ? 'relative z-[101] ring-4 ring-emerald-500 p-2 bg-[#090D16] rounded-xl' : ''}`}>
+        <div className="h-[65%] md:h-auto md:flex-1 flex flex-col min-h-0 border-b md:border-b-0 md:border-r border-slate-800 pb-2 md:pb-0 md:pr-4">
           <div className="flex justify-between items-center mb-2 shrink-0">
              <h2 className="text-xs font-bold text-slate-400 uppercase flex items-center gap-1">
                <UserPlus size={14} /> Equipo
@@ -798,7 +798,7 @@ export default function GameUI() {
              <span className="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-400">{completedTasks} Completadas</span>
           </div>
           
-          <div className="flex-1 overflow-y-auto pr-1 custom-scrollbar">
+          <div className={`flex-1 overflow-y-auto pr-1 custom-scrollbar ${tutorialStep === 2 ? 'relative z-[101] ring-4 ring-emerald-500 p-2 bg-[#090D16] rounded-xl' : ''}`}>
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
               {employees.map(emp => (
                 <motion.div 
@@ -1062,10 +1062,18 @@ export default function GameUI() {
       <AnimatePresence>
         {tutorialStep > 0 && tutorialStep <= 4 && (
           <motion.div 
+            key="bg"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/70 z-[100] backdrop-blur-sm"
+          />
+        )}
+        {tutorialStep > 0 && tutorialStep <= 4 && (
+          <motion.div 
+            key="popup"
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4 pointer-events-none"
           >
-             <div className="bg-[#0F172A] p-6 rounded-2xl border border-indigo-500 shadow-2xl max-w-sm text-center relative z-[102]">
+             <div className="bg-[#0F172A] p-6 rounded-2xl border border-indigo-500 shadow-2xl max-w-sm text-center pointer-events-auto">
                 {tutorialStep === 1 && (
                   <>
                      <h3 className="text-2xl font-black text-red-500 mb-3 flex items-center justify-center gap-2"><Heart size={28}/> Vidas</h3>
