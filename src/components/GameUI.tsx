@@ -754,8 +754,8 @@ export default function GameUI() {
   return (
     <div className="h-screen max-h-screen bg-[#090D16] text-slate-200 flex flex-col font-sans overflow-hidden">
       
-      <header className={`px-4 py-2 bg-[#0F172A] border-b border-slate-800 flex justify-between items-center shrink-0 transition-all ${tutorialStep === 1 ? 'relative z-[101] ring-4 ring-red-500' : ''}`}>
-        <div className="flex items-center gap-4">
+      <header className="px-4 py-2 bg-[#0F172A] border-b border-slate-800 flex justify-between items-center shrink-0 relative z-[105]">
+        <div className={`flex items-center gap-4 transition-all ${tutorialStep === 1 ? 'relative z-[101] ring-4 ring-red-500 bg-slate-900 p-2 rounded-xl shadow-[0_0_20px_rgba(239,68,68,0.5)]' : ''}`}>
           <div className="flex gap-1 text-red-500">
             {[...Array(3)].map((_, i) => (
               <Heart key={i} size={18} fill={i < lives ? "currentColor" : "none"} className={i >= lives ? "text-slate-700" : ""} />
@@ -1071,7 +1071,7 @@ export default function GameUI() {
           <motion.div 
             key="popup"
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
-            className={`fixed inset-0 z-[110] flex justify-center p-4 pointer-events-none ${tutorialStep === 1 || tutorialStep === 2 ? 'items-end md:items-center pb-8 md:pb-4' : 'items-start md:items-center pt-32 md:pt-4'}`}
+            className={`fixed inset-0 z-[110] flex justify-center p-4 pointer-events-none ${tutorialStep === 1 ? 'items-center mt-12' : tutorialStep === 2 ? 'items-end pb-8' : tutorialStep === 3 ? 'items-start pt-24' : 'items-start pt-12'} md:items-center`}
           >
              <div className="bg-[#0F172A] p-6 rounded-2xl border border-indigo-500 shadow-2xl max-w-sm text-center pointer-events-auto">
                 {tutorialStep === 1 && (
