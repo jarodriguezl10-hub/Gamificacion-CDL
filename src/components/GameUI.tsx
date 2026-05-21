@@ -50,67 +50,84 @@ interface LeaderboardEntry {
 const INITIAL_EMPLOYEES: Employee[] = [
   { id: "e1", name: "Sofía", role: "Experiencia", avatar: "👩‍💼", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'compleja' },
   { id: "e3", name: "Mateo", role: "Apaga-incendios", avatar: "👨‍🚒", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'urgente' },
-  { id: "e4", name: "Valeria", role: "Novata", avatar: "👧", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'rutinaria' },
+  { id: "e4", name: "Valeria", role: "Junior", avatar: "👧", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'rutinaria' },
   { id: "ai1", name: "Copilot", role: "Asistente AI", avatar: "🤖", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'analisis', isAi: true },
   { id: "ai2", name: "Gemini", role: "Asistente AI", avatar: "🦾", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'analisis', isAi: true }
 ];
 
 const MASTER_TASK_POOL = [
   // ANÁLISIS (Para Asistentes AI)
-  { name: "Resumir 100 págs de auditoría", type: "analisis", workRequired: 80, canBeDelayed: false },
-  { name: "Crear presentación de métricas", type: "analisis", workRequired: 90, canBeDelayed: false },
-  { name: "Cruzar datos de ventas vs. costos", type: "analisis", workRequired: 100, canBeDelayed: false },
-  { name: "Generar minuta de reunión directiva", type: "analisis", workRequired: 70, canBeDelayed: false },
-  { name: "Extraer KPIs de logs del servidor", type: "analisis", workRequired: 110, canBeDelayed: false },
-  { name: "Comparativa de proveedores en Excel", type: "analisis", workRequired: 120, canBeDelayed: false },
-  { name: "Transcribir entrevista de usuarios", type: "analisis", workRequired: 90, canBeDelayed: false },
-  { name: "Limpiar base de datos de correos", type: "analisis", workRequired: 130, canBeDelayed: false },
-  { name: "Proyectar presupuesto a 5 años", type: "analisis", workRequired: 150, canBeDelayed: false },
-  { name: "Traducir manual de App V2 al inglés", type: "analisis", workRequired: 100, canBeDelayed: false },
+  { name: "Analizar asistencia confirmada vs esperada", type: "analisis", workRequired: 80, canBeDelayed: false },
+  { name: "Detectar retrasos en el cronograma", type: "analisis", workRequired: 90, canBeDelayed: false },
+  { name: "Generar alertas de tareas críticas", type: "analisis", workRequired: 70, canBeDelayed: false },
+  { name: "Analizar costos acumulados del evento", type: "analisis", workRequired: 100, canBeDelayed: false },
+  { name: "Identificar proveedores con incumplimientos", type: "analisis", workRequired: 110, canBeDelayed: false },
+  { name: "Generar reportes automáticos diarios", type: "analisis", workRequired: 80, canBeDelayed: false },
+  { name: "Predecir posibles cuellos de botella", type: "analisis", workRequired: 120, canBeDelayed: false },
+  { name: "Recomendar ajustes logísticos", type: "analisis", workRequired: 90, canBeDelayed: false },
+  { name: "Enviar recordatorios automáticos", type: "analisis", workRequired: 60, canBeDelayed: false },
+  { name: "Generar minutas de reuniones", type: "analisis", workRequired: 70, canBeDelayed: false },
+  { name: "Responder preguntas frecuentes del evento", type: "analisis", workRequired: 50, canBeDelayed: false },
+  { name: "Crear listas automáticas de pendientes", type: "analisis", workRequired: 60, canBeDelayed: false },
+  { name: "Organizar información de proveedores", type: "analisis", workRequired: 80, canBeDelayed: false },
+  { name: "Resumir feedback de asistentes", type: "analisis", workRequired: 90, canBeDelayed: false },
+  { name: "Enviar alertas de cambios de agenda", type: "analisis", workRequired: 50, canBeDelayed: false },
+  { name: "Generar reportes ejecutivos automáticos", type: "analisis", workRequired: 100, canBeDelayed: false },
 
-  // LÍDER (No delegar a AI)
-  { name: "Aprobar presupuesto App V2", type: "lider", workRequired: 120, canBeDelayed: false },
-  { name: "Negociar con Firma Auditora", type: "lider", workRequired: 100, canBeDelayed: false },
-  { name: "Reunión con CEO por Lanzamiento", type: "lider", workRequired: 150, canBeDelayed: false },
-  { name: "Firmar balance final anual", type: "lider", workRequired: 140, canBeDelayed: false },
-  { name: "Desvincular proveedor fraudulento", type: "lider", workRequired: 110, canBeDelayed: false },
-  { name: "Dar feedback a practicante", type: "lider", workRequired: 90, canBeDelayed: false },
-  { name: "Resolver bloqueo legal de la App", type: "lider", workRequired: 130, canBeDelayed: false },
-  { name: "Declarar retraso de la App V2", type: "lider", workRequired: 150, canBeDelayed: false },
+  // LÍDER / GERENTE (Tú)
+  { name: "Definir presupuesto total del evento", type: "lider", workRequired: 140, canBeDelayed: false },
+  { name: "Negociar fechas y contratos con el hotel", type: "lider", workRequired: 150, canBeDelayed: false },
+  { name: "Aprobar proveedores de comida y sonido", type: "lider", workRequired: 120, canBeDelayed: false },
+  { name: "Coordinar reuniones de seguimiento", type: "lider", workRequired: 100, canBeDelayed: false },
+  { name: "Supervisar cumplimiento del cronograma", type: "lider", workRequired: 130, canBeDelayed: false },
+  { name: "Resolver conflictos entre proveedores", type: "lider", workRequired: 110, canBeDelayed: false },
+  { name: "Validar experiencia final de asistentes", type: "lider", workRequired: 120, canBeDelayed: false },
+  { name: "Presentar avances a gerencia general", type: "lider", workRequired: 150, canBeDelayed: false },
 
-  // URGENTES (Para Mateo)
-  { name: "Caída de servidor App V2", type: "urgente", workRequired: 90, canBeDelayed: false },
-  { name: "Enviar documentos contables YA", type: "urgente", workRequired: 80, canBeDelayed: false },
-  { name: "Bug crítico en pasarela App V2", type: "urgente", workRequired: 120, canBeDelayed: false },
-  { name: "Subsanar multa de Hacienda", type: "urgente", workRequired: 130, canBeDelayed: false },
-  { name: "Pérdida de datos de prueba App", type: "urgente", workRequired: 60, canBeDelayed: false },
-  { name: "Reembolso por error App V2", type: "urgente", workRequired: 100, canBeDelayed: false },
-  { name: "Firma urgente de servidores", type: "urgente", workRequired: 70, canBeDelayed: false },
-  { name: "Inspección sorpresa de auditores", type: "urgente", workRequired: 110, canBeDelayed: false },
+  // URGENTES (Para Mateo - Apaga-incendios)
+  { name: "Cancelación inesperada de proveedor", type: "urgente", workRequired: 90, canBeDelayed: false },
+  { name: "Conseguir transporte adicional urgente", type: "urgente", workRequired: 80, canBeDelayed: false },
+  { name: "Manejar quejas urgentes de asistentes", type: "urgente", workRequired: 70, canBeDelayed: false },
+  { name: "Resolver fallas de sonido en conferencia", type: "urgente", workRequired: 100, canBeDelayed: false },
+  { name: "Solución rápida por retrasos logísticos", type: "urgente", workRequired: 110, canBeDelayed: false },
+  { name: "Reubicar personas por falta de sillas", type: "urgente", workRequired: 60, canBeDelayed: false },
+  { name: "Atender incidente médico menor", type: "urgente", workRequired: 80, canBeDelayed: false },
+  { name: "Respuesta rápida ante problemas climáticos", type: "urgente", workRequired: 120, canBeDelayed: false },
 
-  // COMPLEJAS (Para Sofía)
-  { name: "Armar plan de marketing App V2", type: "compleja", workRequired: 140, canBeDelayed: false },
-  { name: "Revisar arquitectura App V2", type: "compleja", workRequired: 150, canBeDelayed: false },
-  { name: "Auditoría de ciberseguridad", type: "compleja", workRequired: 130, canBeDelayed: false },
-  { name: "Diseñar algoritmo principal App", type: "compleja", workRequired: 160, canBeDelayed: false },
-  { name: "Migrar BD para la auditoría", type: "compleja", workRequired: 180, canBeDelayed: false },
-  { name: "Revisión financiera interna", type: "compleja", workRequired: 120, canBeDelayed: false },
-  { name: "Crear manual de usuario App V2", type: "compleja", workRequired: 110, canBeDelayed: false },
-  { name: "Estructurar cuentas auditoría", type: "compleja", workRequired: 140, canBeDelayed: false },
+  // COMPLEJAS (Para Sofía - Experiencia)
+  { name: "Coordinar logística de transporte", type: "compleja", workRequired: 140, canBeDelayed: false },
+  { name: "Revisar lista de invitados y confirmaciones", type: "compleja", workRequired: 130, canBeDelayed: false },
+  { name: "Validar montaje del escenario y pantallas", type: "compleja", workRequired: 150, canBeDelayed: false },
+  { name: "Coordinar agenda de conferencistas", type: "compleja", workRequired: 160, canBeDelayed: false },
+  { name: "Seguimiento a proveedores críticos", type: "compleja", workRequired: 120, canBeDelayed: false },
+  { name: "Preparar reportes diarios del avance", type: "compleja", workRequired: 110, canBeDelayed: false },
+  { name: "Organizar pruebas de sonido y luces", type: "compleja", workRequired: 140, canBeDelayed: false },
+  { name: "Verificar protocolos del evento", type: "compleja", workRequired: 130, canBeDelayed: false },
 
-  // RUTINARIAS - IMPORTANTES (Para Valeria)
-  { name: "Enviar facturas a auditores", type: "rutinaria", workRequired: 40, canBeDelayed: false },
-  { name: "Agendar QA para App V2", type: "rutinaria", workRequired: 50, canBeDelayed: false },
-  { name: "Conciliar cuentas de banco", type: "rutinaria", workRequired: 30, canBeDelayed: false },
-  { name: "Contestar dudas de auditores", type: "rutinaria", workRequired: 20, canBeDelayed: false },
-  { name: "Aprobar gastos de desarrollo", type: "rutinaria", workRequired: 60, canBeDelayed: false },
+  // RUTINARIAS - IMPORTANTES (Para Valeria - Junior)
+  { name: "Actualizar listas de asistentes", type: "rutinaria", workRequired: 40, canBeDelayed: false },
+  { name: "Enviar correos de confirmación", type: "rutinaria", workRequired: 35, canBeDelayed: false },
+  { name: "Organizar carpetas y documentos", type: "rutinaria", workRequired: 30, canBeDelayed: false },
+  { name: "Registrar pagos a proveedores", type: "rutinaria", workRequired: 45, canBeDelayed: false },
+  { name: "Agendar reuniones del equipo", type: "rutinaria", workRequired: 25, canBeDelayed: false },
+  { name: "Imprimir escarapelas y material", type: "rutinaria", workRequired: 50, canBeDelayed: false },
+  { name: "Actualizar cronogramas básicos", type: "rutinaria", workRequired: 40, canBeDelayed: false },
+  { name: "Hacer seguimiento a pendientes simples", type: "rutinaria", workRequired: 30, canBeDelayed: false },
 
   // RUTINARIAS - PUEDEN RETRASARSE (Icebox)
+  { name: "Elegir decoración del salón", type: "rutinaria", workRequired: 30, canBeDelayed: true },
+  { name: "Diseñar filtro de Instagram del evento", type: "rutinaria", workRequired: 25, canBeDelayed: true },
+  { name: "Crear playlist musical del evento", type: "rutinaria", workRequired: 20, canBeDelayed: true },
+  { name: "Elegir colores de las escarapelas", type: "rutinaria", workRequired: 15, canBeDelayed: true },
+  { name: "Buscar fotógrafo extra para la gala", type: "rutinaria", workRequired: 35, canBeDelayed: true },
+  { name: "Ordenar snacks para el equipo", type: "rutinaria", workRequired: 20, canBeDelayed: true },
+  { name: "Publicar post en redes del evento", type: "rutinaria", workRequired: 25, canBeDelayed: true },
+  { name: "Ver inspiración en Pinterest para el montaje", type: "rutinaria", workRequired: 15, canBeDelayed: true },
   { name: "Limpiar bandeja de spam", type: "rutinaria", workRequired: 30, canBeDelayed: true },
-  { name: "Buscar memes para el chat", type: "rutinaria", workRequired: 20, canBeDelayed: true },
-  { name: "Cambiar fondo de pantalla", type: "rutinaria", workRequired: 10, canBeDelayed: true },
+  { name: "Buscar memes para el chat del equipo", type: "rutinaria", workRequired: 20, canBeDelayed: true },
+  { name: "Cambiar fondo de pantalla corporativo", type: "rutinaria", workRequired: 10, canBeDelayed: true },
   { name: "Actualizar foto de perfil", type: "rutinaria", workRequired: 15, canBeDelayed: true },
-  { name: "Revisar boletín del sector", type: "rutinaria", workRequired: 25, canBeDelayed: true },
+  { name: "Revisar boletín del sector eventos", type: "rutinaria", workRequired: 25, canBeDelayed: true },
   { name: "Planear fiesta de fin de año", type: "rutinaria", workRequired: 50, canBeDelayed: true },
   { name: "Comprar snacks de oficina", type: "rutinaria", workRequired: 20, canBeDelayed: true },
   { name: "Ver tutorial de Excel básico", type: "rutinaria", workRequired: 45, canBeDelayed: true }
@@ -118,94 +135,94 @@ const MASTER_TASK_POOL = [
 
 const ONE_ON_ONE_SCENARIOS = [
   { 
-    q: "Siento que el cliente me falta el respeto y no aguanto más la presión.", 
+    q: "Estoy agotado coordinando 15 proveedores a la vez. Siento que voy a colapsar antes del evento.", 
     opts: [
-      { t: "Nadie debe faltarte al respeto. Respira 10 min, yo hablaré con el cliente para fijar límites.", res: "good" }, 
-      { t: "Pásame la tarea a mí, yo me encargo de todo para que no sufras.", res: "bad" }, 
-      { t: "Es un cliente VIP, a veces toca aguantar. Trata de no tomarlo personal.", res: "bad" }
+      { t: "Entiendo. Prioricemos juntos: déjame los 3 proveedores críticos a mí y tú focálzate en los demás.", res: "good" }, 
+      { t: "Todos estamos así, es la única semana fuerte. Aguanta un poco más.", res: "bad" }, 
+      { t: "Si no puedes con todos, asignamos esos proveedores a Mateo mejor.", res: "bad" }
     ] 
   },
   { 
-    q: "Tengo demasiado estrés por el lanzamiento y siento que voy a colapsar.", 
+    q: "El proveedor de catering canceló y siento que la culpa recayó sobre mí ante el cliente.", 
     opts: [
-      { t: "Pausa todo. Vamos a priorizar juntos qué es vital hoy y qué puede esperar.", res: "good" }, 
-      { t: "Todos estamos igual, es el lanzamiento. Toma café y sigamos, ya casi.", res: "bad" }, 
-      { t: "Si no puedes con la presión, le asignaré estas tareas a otra persona.", res: "bad" }
+      { t: "Eso no fue culpa tuya. Yo hablo con el cliente hoy y juntos buscamos un reemplazo ahora.", res: "good" }, 
+      { t: "Sí, debías haberlo confirmado antes. La próxima vez revisa dos veces.", res: "bad" }, 
+      { t: "No te preocupes, yo asumo todo con el cliente. Tú descansa.", res: "bad" }
     ] 
   },
   { 
-    q: "Los auditores me están pidiendo cosas que no entiendo, estoy frustrado.", 
+    q: "Me asignaron tareas de logística compleja que no son mi perfil y me frustran mucho.", 
     opts: [
-      { t: "Revisemos juntos qué piden y te guío para que aprendas a responderles.", res: "good" }, 
-      { t: "Diles que hablen conmigo directamente, yo resuelvo todo con ellos.", res: "bad" }, 
-      { t: "Busca en el manual de procedimientos o en Google, es tu responsabilidad.", res: "bad" }
+      { t: "Tiene razón. Hoy es contingencia, pero mañana reestructuramos las asignaciones.", res: "good" }, 
+      { t: "Es lo que el evento necesita hoy. Tienes que ser más flexible.", res: "bad" }, 
+      { t: "Si no te gusta, la tarea la toma otro que sí quiera trabajar.", res: "bad" }
     ] 
   },
   { 
-    q: "Siento que me asignan tareas que no van con mi perfil y me frustra.", 
+    q: "Los asistentes se quejan directamente conmigo y ya no aguanto más la presión del evento.", 
     opts: [
-      { t: "Tienes razón. Hoy es contingencia, pero mañana alinearemos mejor tus tareas.", res: "good" }, 
-      { t: "Es lo que la empresa necesita hoy. Tienes que ser más flexible.", res: "bad" }, 
-      { t: "Si no te gusta, deja la tarea y que la tome otro que sí quiera trabajar.", res: "bad" }
+      { t: "Nadie debe descargarse contigo así. Respira 10 min, yo pongo un canal único de quejas.", res: "good" }, 
+      { t: "Es un evento VIP, hay que aguantar. Trata de no tomarlo personal.", res: "bad" }, 
+      { t: "Pásame esas quejas, yo las atiendo para que no sufras.", res: "bad" }
     ] 
   },
   { 
-    q: "He estado cometiendo muchos errores hoy por el estrés.", 
+    q: "He cometido varios errores en el registro de pagos a proveedores por el estrés del evento.", 
     opts: [
-      { t: "Los errores pasan. Toma 5 min de pausa, luego hacemos un doble chequeo juntos.", res: "good" }, 
-      { t: "Dame esas tareas a mí. Yo las terminaré para asegurar que queden bien.", res: "bad" }, 
-      { t: "Concéntrate más, un error en esta auditoría nos puede costar carísimo.", res: "bad" }
+      { t: "Los errores pasan bajo presión. Toma 5 min, luego revisamos juntos los registros críticos.", res: "good" }, 
+      { t: "Déjame eso a mí, yo lo reviso para asegurar que esté bien.", res: "bad" }, 
+      { t: "Concéntrate más. Un error en los pagos nos puede generar problemas legales.", res: "bad" }
     ] 
   }
 ];
 
 const SUPPORT_SCENARIOS = [
   { 
-    q: "Jefe, no entiendo cómo llenar este campo del reporte, ¿me explicas?", 
+    q: "¿Cómo manejo la queja de un asistente VIP que dice que su mesa no fue reservada?", 
     opts: [
-      { t: "Revisemos el formato juntos un par de minutos para que sepas hacerlo a futuro.", res: "good" }, 
-      { t: "Pon cualquier valor estimado por ahora, lo importante es entregarlo rápido.", res: "bad" }, 
-      { t: "Lee el manual de contabilidad. No tengo tiempo para cosas operativas.", res: "bad" }
+      { t: "Llévalo a un área tranquila, verifica la lista y si hay error, ofrécete personalmente a solucionarlo.", res: "good" }, 
+      { t: "Díle que espere, que seguramente es un error del sistema y que ya se resolverá.", res: "bad" }, 
+      { t: "Díle que la culpa es del proveedor de registro y que hable con ellos.", res: "bad" }
     ] 
   },
   { 
-    q: "La plataforma de la App arrojó un error 500 y no sé qué hacer.", 
+    q: "El sistema de registro digital falló y no puedo validar la entrada de los asistentes.", 
     opts: [
-      { t: "Documenta el error con pantallazos, escala a IT y avísame el tiempo estimado.", res: "good" }, 
-      { t: "Sigue intentando recargar la página hasta que funcione, a veces colapsa.", res: "bad" }, 
-      { t: "Cancela la tarea, si el sistema no sirve no es nuestra culpa, que esperen.", res: "bad" }
+      { t: "Activa el registro manual con las listas impresas y escala el fallo al proveedor técnico ya.", res: "good" }, 
+      { t: "Espera unos minutos, estos sistemas se caen solos y se vuelven a levantar.", res: "bad" }, 
+      { t: "Para el ingreso hasta que el sistema funcione, no podemos arriesgarnos a errores.", res: "bad" }
     ] 
   },
   { 
-    q: "El proveedor dice que no puede entregarnos hoy. ¿Qué le digo?", 
+    q: "El proveedor de sonido dice que llegará 2 horas tarde. ¿Qué le comunico al cliente?", 
     opts: [
-      { t: "Pídele que justifique el retraso por correo y evalúa con él opciones alternativas.", res: "good" }, 
-      { t: "Dile que es inaceptable, exígele que cumpla el contrato o lo demandaremos.", res: "bad" }, 
-      { t: "Dile que no hay problema, reprograma todo para mañana y listo.", res: "bad" }
+      { t: "Infórmale al cliente con honestidad, ofrece una alternativa temporal y exige compromiso por escrito al proveedor.", res: "good" }, 
+      { t: "No le digas nada al cliente todavía, esperemos a ver si el proveedor llega antes.", res: "bad" }, 
+      { t: "Díle al cliente que es el tráfico, que es algo fuera de nuestro control.", res: "bad" }
     ] 
   },
   { 
-    q: "Tengo un problema con el VPN, no me conecta a la red interna.", 
+    q: "No entiendo cómo llenar el campo de costos acumulados en el reporte del evento.", 
     opts: [
-      { t: "Abre un ticket con soporte de inmediato y avanza con tareas locales mientras.", res: "good" }, 
-      { t: "Reinicia tu computadora y el router, eso siempre funciona en estos casos.", res: "bad" }, 
-      { t: "Usa tu red personal sin la VPN para sacar lo urgente, no podemos atrasarnos.", res: "bad" }
+      { t: "Revisemos el formato juntos 5 minutos para que lo aprendas y puedas hacerlo solo a futuro.", res: "good" }, 
+      { t: "Pon un estimado por ahora, lo importante es entregarlo antes de la reunión.", res: "bad" }, 
+      { t: "Consulta el manual de procedimientos, no tengo tiempo para cosas operativas ahora.", res: "bad" }
     ] 
   },
   { 
-    q: "El cliente me pide una funcionalidad que no está en el contrato.", 
+    q: "Un conferencista pide cambios de último minuto en su presentación. ¿Los apruebo?", 
     opts: [
-      { t: "Explícale amablemente que está fuera del alcance y ofrece agendar para cotizarla.", res: "good" }, 
-      { t: "Dile que sí, pero que tardará. Hay que mantener al cliente feliz a toda costa.", res: "bad" }, 
-      { t: "Dile rotundamente que no y que lea el contrato que firmó.", res: "bad" }
+      { t: "Evalúa si afecta la agenda. Si es menor, aprueba. Si cambia el flujo, escala a mí primero.", res: "good" }, 
+      { t: "Sí, aprueba todo para no crear conflicto con el conferencista.", res: "bad" }, 
+      { t: "No, dile que ya es muy tarde para cambios y que use lo que aprobó antes.", res: "bad" }
     ] 
   },
   { 
-    q: "Encontré una inconsistencia millonaria en los libros, ¿qué hago?", 
+    q: "Hay un conflicto entre el proveedor de iluminación y el de sonido por espacio en el escenario.", 
     opts: [
-      { t: "Aísla esos registros. Haz un informe rápido y lo revisamos juntos antes de escalar.", res: "good" }, 
-      { t: "Pásamela directo a mí en este instante, yo me encargo de los auditores.", res: "bad" }, 
-      { t: "Intenta cuadrarlo con gastos varios para que la auditoría no levante hallazgo.", res: "bad" }
+      { t: "Réunelos a los dos, facilita una solución conjunta y documenta el acuerdo.", res: "good" }, 
+      { t: "Díle al de sonido que ceda el espacio, ellos llegaron primero.", res: "bad" }, 
+      { t: "Díjame eso a mí, yo hablo con los dos ahora mismo.", res: "bad" }
     ] 
   }
 ];
@@ -279,9 +296,9 @@ export default function GameUI() {
       let addedGlobalTime = 0;
       let newGenerated = currentGenerated;
 
-      // Evento Especial: Cita médica al minuto 1 (Tick 600, quedan 60s)
+      // Evento Especial: Cita médica al minuto 1 (Tick 600, quedan 60s) — solo humanos, nunca AI
       if (currentTicks === 600) {
-         const availableEmps = currentEmps.filter(e => e.id !== "leader" && !e.isMedical);
+         const availableEmps = currentEmps.filter(e => e.id !== "leader" && !e.isMedical && !e.isAi);
          if (availableEmps.length > 0) {
             const unluckyEmp = availableEmps[Math.floor(Math.random() * availableEmps.length)];
             const empIdx = currentEmps.findIndex(e => e.id === unluckyEmp.id);
@@ -302,9 +319,11 @@ export default function GameUI() {
         }
       };
 
-      if (currentTicks % 40 === 0) spawnTask();
-      if (currentTicks % 150 === 0) {
-        for (let i = 0; i < 3; i++) spawnTask();
+      // 1 tarea cada 6 segundos (60 ticks) + 2 adicionales cada 20 segundos (200 ticks)
+      if (currentTicks % 60 === 0) spawnTask();
+      if (currentTicks % 200 === 0) {
+        spawnTask();
+        spawnTask();
       }
 
       // Penalización por 13 tareas
@@ -373,11 +392,16 @@ export default function GameUI() {
           const newStress = Math.min(100, emp.stress + stressStep);
           const newMaxStress = Math.max(emp.maxStress, newStress);
 
-          if (Math.random() < 0.005 && emp.id !== "leader" && !emp.isAi) {
+          // Si la tarea es del tipo incorrecto para un humano, pide 1:1 con más frecuencia
+          const isWrongTask = taskType !== emp.bestTask;
+          const helpChance = isWrongTask ? 0.035 : 0.004;
+          const burnoutChance = isWrongTask ? 0.008 : 0.002;
+
+          if (Math.random() < helpChance && emp.id !== "leader" && !emp.isAi) {
             return { ...emp, isAskingHelp: true, stress: newStress, maxStress: newMaxStress };
           }
 
-          if (Math.random() < 0.002 && emp.id !== "leader" && !emp.isAi) {
+          if (Math.random() < burnoutChance && emp.id !== "leader" && !emp.isAi) {
             newBacklog.push(emp.currentTask);
             return { ...emp, isBurnedOut: true, currentTask: null, stress: 100, maxStress: 100 };
           }
@@ -572,7 +596,7 @@ export default function GameUI() {
     e.preventDefault();
     if (leaderName.trim()) {
       setEmployees([
-        { id: "leader", name: leaderName, role: "Tú (Líder)", avatar: "👑", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'all' },
+        { id: "leader", name: leaderName, role: "Gerente de Proyectos (tú)", avatar: "👑", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'all' },
         ...INITIAL_EMPLOYEES
       ]);
       const pool = shuffle(MASTER_TASK_POOL);
@@ -590,7 +614,7 @@ export default function GameUI() {
 
   const restartGame = () => {
     setEmployees([
-      { id: "leader", name: leaderName, role: "Tú (Líder)", avatar: "👑", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'all' },
+      { id: "leader", name: leaderName, role: "Gerente de Proyectos (tú)", avatar: "👑", stress: 0, maxStress: 0, tasksAssigned: 0, currentTask: null, isBurnedOut: false, tasksDone: 0, isAskingHelp: false, isMedical: false, medicalTimer: 0, timeSpentWorkingMs: 0, bestTask: 'all' },
       ...INITIAL_EMPLOYEES
     ]);
     const pool = shuffle(MASTER_TASK_POOL);
@@ -693,8 +717,8 @@ export default function GameUI() {
             <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-xl">
               <h3 className="text-lg font-bold text-emerald-400 mb-3 flex items-center gap-2"><Target /> Tus Grandes Metas</h3>
               <ul className="space-y-2 text-sm text-slate-300">
-                <li>• 🚀 <strong>Lanzamiento Épico de App V2:</strong> ¡El mercado nos espera!</li>
-                <li>• 💼 <strong>Cierre de Auditoría Financiera:</strong> La supervivencia de la empresa está en juego.</li>
+                <li>• 🎤 <strong>Ejecutar el Evento Empresarial para 800 personas:</strong> ¡Debe ser un éxito total!</li>
+                <li>• 📋 <strong>Gestionar Proveedores y Logística:</strong> Sin fallas, sin retrasos, sin excusas.</li>
                 <li>• ⚠️ <strong>¡Cuidado!</strong> La presión es enorme y tu equipo colapsará si no delegas bien.</li>
               </ul>
             </div>
@@ -781,9 +805,9 @@ export default function GameUI() {
           <Target size={12}/> OBJETIVOS DE HOY:
         </span>
         <div className="flex gap-4 text-[12px] font-bold text-slate-300">
-           <span>1. Lanzamiento App V2</span>
+           <span>1. Evento Empresarial 800 Personas</span>
            <span className="text-slate-600">|</span>
-           <span>2. Cierre Auditoría Financiera</span>
+           <span>2. Gestión de Proveedores y Logística</span>
         </div>
       </div>
 
@@ -798,7 +822,7 @@ export default function GameUI() {
              <span className="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-400">{completedTasks} Completadas</span>
           </div>
           
-          <div className={`flex-1 overflow-y-auto pr-1 custom-scrollbar ${tutorialStep === 2 ? 'relative z-[101] ring-4 ring-emerald-500 p-2 bg-[#090D16] rounded-xl' : ''}`}>
+          <div className={`flex-1 overflow-y-auto pr-1 custom-scrollbar ${(tutorialStep === 2 || tutorialStep === 3) ? 'relative z-[101] ring-4 ring-emerald-500 p-2 bg-[#090D16] rounded-xl' : ''}`}>
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
               {employees.map(emp => (
                 <motion.div 
@@ -828,10 +852,10 @@ export default function GameUI() {
                     <div className="text-xl md:text-2xl">{emp.avatar}</div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1">
-                        <h3 className={`font-bold text-[10px] md:text-xs truncate ${emp.id === "leader" ? "text-amber-400" : emp.isMedical ? "text-slate-400 line-through" : "text-white"}`}>{emp.name}</h3>
+                        <h3 className={`font-bold text-[12px] md:text-sm truncate ${emp.id === "leader" ? "text-amber-400" : emp.isMedical ? "text-slate-400 line-through" : "text-white"}`}>{emp.name}</h3>
                         {emp.id !== "leader" && !emp.isMedical && <span title="Afín a esta tarea" className="opacity-50">{getTaskIcon(emp.bestTask as TaskType)}</span>}
                       </div>
-                      <p className="text-[9px] text-slate-400 truncate">{emp.role}</p>
+                      <p className="text-[11px] text-slate-400 truncate">{emp.role}</p>
                     </div>
                   </div>
 
@@ -898,7 +922,7 @@ export default function GameUI() {
             onDrop={handleIceboxDrop}
             className={`mt-2 h-16 md:h-20 shrink-0 border-2 border-dashed rounded-xl flex flex-col overflow-hidden transition-colors cursor-pointer ${
               selectedTaskId ? 'border-blue-500 bg-blue-950/20 shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'border-slate-600/50 bg-slate-900/50 hover:border-blue-500/50'
-            } ${tutorialStep === 4 ? 'relative z-[101] ring-4 ring-orange-400 bg-slate-900' : ''}`}
+            } ${tutorialStep === 5 ? 'relative z-[101] ring-4 ring-orange-400 bg-slate-900' : ''}`}
           >
             <h2 className="text-[10px] font-bold text-slate-500 uppercase flex items-center justify-between p-1 md:p-1.5 bg-slate-800/80">
               <span className="flex items-center gap-1"><Archive size={12} /> Para Después</span>
@@ -924,7 +948,7 @@ export default function GameUI() {
         </div>
 
         {/* ZONA DE TAREAS (Abajo en móvil 40%, derecha en PC) */}
-        <div className={`flex-1 md:h-auto md:w-64 lg:w-72 flex flex-col shrink-0 min-h-0 gap-2 bg-slate-900/90 border border-indigo-500/30 rounded-xl p-2 ${tutorialStep === 3 ? 'relative z-[101] ring-4 ring-blue-400 bg-slate-800' : ''}`}>
+        <div className={`flex-1 md:h-auto md:w-64 lg:w-72 flex flex-col shrink-0 min-h-0 gap-2 bg-slate-900/90 border border-indigo-500/30 rounded-xl p-2 ${tutorialStep === 4 ? 'relative z-[101] ring-4 ring-blue-400 bg-slate-800' : ''}`}>
           
           <div className="flex-1 flex flex-col overflow-hidden min-h-0">
             <h2 className="text-xs font-bold text-indigo-400 uppercase flex items-center justify-between mb-2 shrink-0">
@@ -1060,18 +1084,23 @@ export default function GameUI() {
         </div>
       )}
       <AnimatePresence>
-        {tutorialStep > 0 && tutorialStep <= 4 && (
+        {tutorialStep > 0 && tutorialStep <= 5 && (
           <motion.div 
             key="bg"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/70 z-[100] backdrop-blur-sm"
           />
         )}
-        {tutorialStep > 0 && tutorialStep <= 4 && (
+        {tutorialStep > 0 && tutorialStep <= 5 && (
           <motion.div 
             key="popup"
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
-            className={`fixed inset-0 z-[110] flex justify-center p-4 pointer-events-none ${tutorialStep === 1 ? 'items-center mt-12' : tutorialStep === 2 ? 'items-end pb-8' : tutorialStep === 3 ? 'items-start pt-24' : 'items-start pt-12'} md:items-center`}
+            className={`fixed inset-0 z-[110] flex justify-center p-4 pointer-events-none ${
+              tutorialStep === 1 ? 'items-center mt-12' : 
+              (tutorialStep === 2 || tutorialStep === 3) ? 'items-end pb-8' : 
+              tutorialStep === 4 ? 'items-start pt-24' : 
+              'items-start pt-12'
+            } md:items-center`}
           >
              <div className="bg-[#0F172A] p-6 rounded-2xl border border-indigo-500 shadow-2xl max-w-sm text-center pointer-events-auto">
                 {tutorialStep === 1 && (
@@ -1088,20 +1117,33 @@ export default function GameUI() {
                 )}
                 {tutorialStep === 3 && (
                   <>
-                     <h3 className="text-2xl font-black text-blue-400 mb-3 flex items-center justify-center gap-2"><FileText size={28}/> La Bandeja</h3>
-                     <p className="text-slate-300 font-medium leading-relaxed">Aquí es donde llegan los problemas sin parar. Haz clic en la tarea y luego haz clic en el empleado que pueda resolverla.</p>
+                     <h3 className="text-3xl font-black text-amber-400 mb-3 flex items-center justify-center gap-2"><UserPlus size={30}/> Perfiles de tu Equipo</h3>
+                     <div className="text-slate-300 font-medium text-sm text-left space-y-2.5 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/50">
+                       <p className="font-bold text-slate-200 mb-2 text-[13px] uppercase tracking-wider">Recuerda que tu equipo tiene:</p>
+                       <p>• <strong>👑 Tú:</strong> Gerente de Proyectos (Decisiones estratégicas y de liderazgo)</p>
+                       <p>• <strong>Sofía:</strong> Experiencia — Logística, agenda y proveedores críticos</p>
+                       <p>• <strong>Mateo:</strong> Apaga-incendios — Emergencias y crisis del evento</p>
+                       <p>• <strong>Valeria:</strong> Junior — Correos, listas, documentos y agenda</p>
+                       <p>• <strong>Copilot y Gemini:</strong> Análisis de datos, reportes y tareas repetitivas</p>
+                     </div>
                   </>
                 )}
                 {tutorialStep === 4 && (
                   <>
+                     <h3 className="text-2xl font-black text-blue-400 mb-3 flex items-center justify-center gap-2"><FileText size={28}/> La Bandeja</h3>
+                     <p className="text-slate-300 font-medium leading-relaxed">Aquí es donde llegan los problemas sin parar. Haz clic en la tarea y luego haz clic en el empleado que pueda resolverla.</p>
+                  </>
+                )}
+                {tutorialStep === 5 && (
+                  <>
                      <h3 className="text-2xl font-black text-orange-400 mb-3 flex items-center justify-center gap-2"><Archive size={28}/> Para Después</h3>
-                     <p className="text-slate-300 font-medium leading-relaxed">Si una tarea NO aporta al lanzamiento de la App ni a la Auditoría, ¡envíala aquí inmediatamente!</p>
+                     <p className="text-slate-300 font-medium leading-relaxed">Si una tarea NO aporta al evento ni a la gestión de proveedores, ¡envíala aquí inmediatamente!</p>
                   </>
                 )}
                 <button 
                   onClick={() => {
-                    if (tutorialStep === 4) {
-                      setTutorialStep(5);
+                    if (tutorialStep === 5) {
+                      setTutorialStep(6);
                       setIsPlaying(true);
                     } else {
                       setTutorialStep(s => s + 1);
@@ -1109,7 +1151,7 @@ export default function GameUI() {
                   }}
                   className="mt-8 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black py-4 rounded-xl transition-all active:scale-95 text-lg"
                 >
-                  {tutorialStep === 4 ? "¡ARRANCAR!" : "Entendido"}
+                  {tutorialStep === 5 ? "¡ARRANCAR!" : "Entendido"}
                 </button>
              </div>
           </motion.div>
